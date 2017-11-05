@@ -1,0 +1,280 @@
+{
+    "initial_balance": {
+        "header": "Initial capital",
+        "units": "$",
+        "colored": false,
+        "note": {}
+    },
+    "net_profit_abs": {
+        "header": "Net profit",
+        "units": "$",
+        "colored": true,
+        "note": {}
+    },
+    "net_profit_perc": {
+        "header": "Net profit %",
+        "units": "%",
+        "colored": true,
+        "note": {}
+    },
+    "year_profit": {
+        "header": "Year profit %",
+        "units": "%",
+        "colored": true,
+        "note": {
+            "en": "",
+            "ru": "Средне-геометрический темп прироста за год."
+        }
+    },
+    "month_profit": {
+        "header": "Month profit %",
+        "units": "%",
+        "colored": true,
+        "note": {
+            "en": "",
+            "ru": "Средне-геометрический темп прироста за месяц."
+        }
+    },
+    "total_mae": {
+        "header": "Total MAE",
+        "units": "$",
+        "colored": true,
+        "note": {
+            "en": "Maximum Adverse Excursion. The largest loss suffered by a single trade while it is open.",
+            "ru": ""
+        }
+    },
+    "total_mfe": {
+        "header": "Total MFE",
+        "units": "$",
+        "colored": true,
+        "note": {
+            "en": "Maximum Favorable Excursion. The most profit that could have been extracted by a single trade while it is open.",
+            "ru": ""
+        }
+    },
+    "total_trades": {
+        "header": "Number of trades",
+        "units": "",
+        "colored": false,
+        "note": {},
+        "separated": true
+    },
+    "average_profit_abs": {
+        "header": "Average profit",
+        "units": "$",
+        "colored": true,
+        "note": {}
+    },
+    "average_profit_perc": {
+        "header": "Average profit %",
+        "units": "%",
+        "colored": true,
+        "note": {}
+    },
+    "bars_on_trade": {
+        "header": "Average bars held",
+        "units": "",
+        "colored": false,
+        "note": {}
+    },
+    "win_trades_abs": {
+        "header": "Winning trades",
+        "units": "",
+        "colored": false,
+        "note": {},
+        "separated": true
+    },
+    "win_trades_perc": {
+        "header": "Winning trades %",
+        "units": "%",
+        "colored": false,
+        "note": {}
+    },
+    "total_profit": {
+        "header": "Gross profit",
+        "units": "$",
+        "colored": true,
+        "note": {}
+    },
+    "win_average_profit_abs": {
+        "header": "Average profit",
+        "units": "$",
+        "colored": true,
+        "note": {}
+    },
+    "win_average_profit_perc": {
+        "header": "Average profit %",
+        "units": "%",
+        "colored": true,
+        "note": {}
+    },
+    "win_bars_on_trade": {
+        "header": "Average bars held",
+        "units": "",
+        "colored": false,
+        "note": {}
+    },
+    "win_in_series": {
+        "header": "Maximum consecutive winners",
+        "units": "",
+        "colored": false,
+        "note": {}
+    },
+    "loss_trades_abs": {
+        "header": "Losing trades",
+        "units": "",
+        "colored": false,
+        "note": {},
+        "separated": true
+    },
+    "loss_trades_perc": {
+        "header": "Losing trades %",
+        "units": "%",
+        "colored": false,
+        "note": {}
+    },
+    "total_loss": {
+        "header": "Gross loss",
+        "units": "$",
+        "colored": true,
+        "note": {}
+    },
+    "loss_average_profit_abs": {
+        "header": "Average loss",
+        "units": "$",
+        "colored": true,
+        "note": {}
+    },
+    "loss_average_profit_perc": {
+        "header": "Average loss %",
+        "units": "%",
+        "colored": true,
+        "note": {}
+    },
+    "loss_bars_on_trade": {
+        "header": "Average bars held",
+        "units": "",
+        "colored": false,
+        "note": {}
+    },
+    "loss_in_series": {
+        "header": "Maximum consecutive losses",
+        "units": "",
+        "colored": false,
+        "note": {}
+    },
+    "max_profit_abs": {
+        "header": "Maximum profit",
+        "units": "$",
+        "colored": true,
+        "note": {},
+        "separated": true
+    },
+    "max_profit_abs_day": {
+        "header": "Maximum profit date",
+        "units": "",
+        "colored": false,
+        "note": {}
+    },
+    "max_profit_perc": {
+        "header": "Maximum profit %",
+        "units": "%",
+        "colored": true,
+        "note": {}
+    },
+    "max_profit_perc_day": {
+        "header": "Maximum profit % date",
+        "units": "",
+        "colored": false,
+        "note": {}
+    },
+    "max_drawdown_abs": {
+        "header": "Maximum drawdown",
+        "units": "$",
+        "colored": true,
+        "note": {}
+    },
+    "max_drawdown_abs_day": {
+        "header": "Maximum drawdown date",
+        "units": "",
+        "colored": false,
+        "note": {}
+    },
+    "max_drawdown_perc": {
+        "header": "Maximum drawdown %",
+        "units": "%",
+        "colored": true,
+        "note": {}
+    },
+    "max_drawdown_perc_day": {
+        "header": "Maximum drawdown % date",
+        "units": "",
+        "colored": false,
+        "note": {}
+    },
+    "profit_factor": {
+        "header": "Profit factor",
+        "units": "",
+        "colored": true,
+        "separated": true,
+        "note": {
+            "en": "",
+            "ru": "Соотношение суммарной прибыли всех прибыльных сделок на суммарный убыток всех убыточных сделок. Рассчитывается по формуле: Профит Фактор = Вся прибыль / Весь убыток\"."
+        }
+    },
+    "recovery_factor": {
+        "header": "Recovery factor",
+        "units": "",
+        "colored": true,
+        "note": {
+            "en": "",
+            "ru": "Отношение абсолютной прибыли к максимальной просадке. Показывает насколько быстро торговая система восстанавливается после просадок. Рассчитывается по формуле: Фактор восстановления = П/У / Макс. убыток."
+        }
+    },
+    "payoff_ratio": {
+        "header": "Payoff ratio",
+        "units": "",
+        "colored": true,
+        "note": {
+            "en": "",
+            "ru": "Соотношение средней прибыльной сделки к средней убыточной.) Показывает во сколько раз средняя прибыль превышает средний убыток. Рассчитывается по формуле: Коэф. выигрыша = средняя прибыль / средний убыток."
+        }
+    },
+    "sharpe_ratio": {
+        "header": "Sharpe ratio",
+        "units": "",
+        "colored": true,
+        "note": {
+            "en": "Measure for calculating risk-adjusted return.The ratio describes how much excess return you are receiving for the extra volatility that you endure for holding a riskier asset.",
+            "ru": ""
+        }
+    },
+    "sortino_ratio": {
+        "header": "Sortino ratio",
+        "units": "",
+        "colored": true,
+        "note": {
+            "en": "The Sortino ratio is a variation of the Sharpe ratio that differentiates harmful volatility from total overall volatility by using the asset's standard deviation of negative asset returns.",
+            "ru": ""
+        }
+    },
+    "alpha_ratio": {
+        "header": "Alpha ratio",
+        "units": "",
+        "colored": true,
+        "note": {
+            "en": "Measure of the active return on an investment, gauges the performance of an investment against a market index.",
+            "ru": ""
+        }
+    },
+    "beta_ratio": {
+        "header": "Beta ratio",
+        "units": "",
+        "colored": true,
+        "note": {
+            "en": "Measure of the volatility, or systematic risk in comparison to the market as a whole.",
+            "ru": ""
+        }
+    }
+}

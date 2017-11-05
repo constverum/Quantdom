@@ -1,0 +1,5 @@
+PyQt5==5.9
+pyqtgraph==0.10.0
+numpy==1.13.3
+pandas==0.21.0
+pandas-datareader==0.5.0
