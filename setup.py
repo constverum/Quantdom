@@ -43,7 +43,6 @@ setup(
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Operating System :: POSIX',
         'Operating System :: MacOS :: MacOS X',

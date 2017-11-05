@@ -32,7 +32,7 @@ Features
 Requirements
 ------------
 
-* Python **3.5** or higher
+* Python **3.6** or higher
 * `PyQt5 <https://pypi.python.org/pypi/PyQt5>`_
 * `PyQtGraph <http://www.pyqtgraph.org/>`_
 * `NumPy <http://www.numpy.org/>`_
