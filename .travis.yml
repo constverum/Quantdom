@@ -2,7 +2,6 @@ language: python
 
 python:
   - 3.6
-  - 3.7
 
 os:
   - linux
@@ -17,7 +16,6 @@ install:
   - curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
   - source $HOME/.poetry/env
   - poetry install --no-interaction
-  - poetry build --no-interaction
 
 before_script:
   - export DISPLAY=:99.0
@@ -30,7 +28,7 @@ script:
 
 deploy:
   provider: script
-  script: poetry publish --no-interaction --username "$PYPI_USERNAME" --password "$PYPI_PASSWORD"
+  script: poetry publish --build --no-interaction --username "$PYPI_USERNAME" --password "$PYPI_PASSWORD"
   on:
     tags: true
     branch: master
