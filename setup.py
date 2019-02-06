@@ -16,7 +16,7 @@ with codecs.open('requirements.txt', mode='r', encoding='utf-8') as f:
 
 SETUP_REQUIRES = ['pytest-runner']
 TEST_REQUIRES = ['pytest>=3.2.1', 'pytest-qt>=2.2.1']
-PACKAGES = ['quantdom', ]
+PACKAGES = ['quantdom', 'quantdom.lib']
 PACKAGE_DATA = {'': ['LICENSE']}
 
 
@@ -57,4 +57,5 @@ setup(
     keywords='quant trading',
     zip_safe=False,
     test_suite='tests',
+    include_package_data=True,
 )
