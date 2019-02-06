@@ -4,7 +4,7 @@ build-backend = "poetry.masonry.api"
 
 [tool.poetry]
 name = "quantdom"
-version = "0.1a2"
+version = "0.1"
 readme = "README.rst"
 authors = ["Constverum <constverum@gmail.com>"]
 description = "Simple but powerful backtesting framework, that strives to let you focus on modeling financial strategies, portfolio management, and analyzing backtests."

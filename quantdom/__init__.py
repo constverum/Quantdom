@@ -15,7 +15,7 @@ limitations under the License.
 """
 
 __title__ = 'Quantdom'
-__version__ = '0.1a2'
+__version__ = '0.1'
 
 from .ui import *  # noqa
 from .lib import *  # noqa
