@@ -1,5 +1,5 @@
 """
-Copyright © 2017-2018 Constverum <constverum@gmail.com>. All rights reserved.
+Copyright © 2017-2019 Constverum <constverum@gmail.com>. All rights reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -15,16 +15,7 @@ limitations under the License.
 """
 
 __title__ = 'Quantdom'
-__package__ = 'quantdom'
-__version__ = '0.1a1'
-__short_description__ = 'Simple but powerful backtesting framework, that strives to let you focus on modeling financial strategies, portfolio management, and analyzing backtests.'
-__author__ = 'Constverum'
-__author_email__ = 'constverum@gmail.com'
-__url__ = 'https://github.com/constverum/Quantdom'
-__license__ = 'Apache License, Version 2.0'
-__copyright__ = 'Copyright 2017-2018 Constverum'
-
-# Each of the submodules having an __all__ variable.
+__version__ = '0.1a2'
 
 from .ui import *  # noqa
 from .lib import *  # noqa
@@ -33,7 +24,5 @@ from .lib import *  # noqa
 __all__ = (
     ui.__all__ +
     lib.__all__ +
-    ('__title__', '__package__', '__version__', '__short_description__',
-     '__author__', '__author_email__', '__url__', '__license__',
-     '__copyright__')
+    (__title__, __version__)
 )

@@ -1,0 +1,84 @@
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
+
+[tool.poetry]
+name = "quantdom"
+version = "0.1a2"
+readme = "README.rst"
+authors = ["Constverum <constverum@gmail.com>"]
+description = "Simple but powerful backtesting framework, that strives to let you focus on modeling financial strategies, portfolio management, and analyzing backtests."
+homepage = "https://github.com/constverum/Quantdom"
+repository = "https://github.com/constverum/Quantdom"
+documentation = "https://github.com/constverum/Quantdom"
+platforms = "any"
+license = "Apache License, Version 2.0"
+copyright = "Copyright 2017-2019 Constverum"
+include = [
+  "LICENSE",
+  "README.rst",
+  "CHANGELOG.rst",
+  "quantdom/report_rows.json"
+]
+keywords = [
+    "quant", "quantitative", "backtest", "backtesting", "quantitative-finance",
+    "trading", "trading-strategies", "trading-platform", "algo", "algotrading",
+    "algorithmic", "algorithmic-trading", "finance", "fintech", "financial-analysis",
+    "stocks", "stock-market", "strategy", "market", "investment", "currency", "forex",
+    "fund", "futures"
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Operating System :: POSIX",
+    "Operating System :: MacOS :: MacOS X",
+    "Operating System :: Microsoft :: Windows",
+    "Intended Audience :: End Users/Desktop",
+    "Intended Audience :: Financial and Insurance Industry",
+    "Intended Audience :: Science/Research",
+    "Topic :: Office/Business :: Financial",
+    "Topic :: Office/Business :: Financial :: Investment",
+    "License :: OSI Approved :: Apache Software License"
+]
+
+[tool.poetry.dependencies]
+python = "^3.6"
+PyQt5 = "^5.11"
+pyqtgraph = "^0.10.0"
+numpy = "^1.16"
+pandas = "^0.24.1"
+pandas-datareader = "^0.7.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^4.2"
+pytest-qt = "^3.2"
+pytest-runner = "^4.2"
+black = {version = "^18.3-alpha.0",allows-prereleases = true}
+flake8 = "^3.7"
+pytest-isort = "^0.2.1"
+pytest-flake8 = "^1.0"
+
+[tool.poetry.scripts]
+quantdom = "quantdom.cli:cli"
+
+# https://github.com/pytest-dev/pytest/issues/1556
+# https://github.com/pytest-dev/pytest/pull/3686
+# [tool.poetry.plugins.pytest]
+
+[tool.black]
+py36 = true
+line-length = 80
+skip-string-normalization = true
+include = '\.pyi?$'
+exclude = '''
+(
+  /(
+      \.eggs         # exclude a few common directories in the
+    | \.git          # root of the project
+    | build
+    | dist
+  )
+)
+'''
