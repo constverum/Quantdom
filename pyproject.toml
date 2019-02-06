@@ -11,9 +11,7 @@ description = "Simple but powerful backtesting framework, that strives to let yo
 homepage = "https://github.com/constverum/Quantdom"
 repository = "https://github.com/constverum/Quantdom"
 documentation = "https://github.com/constverum/Quantdom"
-platforms = "any"
-license = "Apache License, Version 2.0"
-copyright = "Copyright 2017-2019 Constverum"
+license = "Apache-2.0"
 include = [
   "LICENSE",
   "README.rst",
@@ -28,7 +26,6 @@ keywords = [
     "fund", "futures"
 ]
 classifiers = [
-    "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
     "Programming Language :: Python :: 3.6",
     "Programming Language :: Python :: 3.7",

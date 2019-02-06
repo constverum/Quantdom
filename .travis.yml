@@ -1,21 +1,36 @@
 language: python
+
 python:
   - 3.6
+  - 3.7
+
 os:
   - linux
+
+env:
+  global:
+    - secure: C0YKuNWFQTplUfoKTY5nCePum6CIwdyrNsoZ1/aLVgtO9GQMLNRqNn1rRThqy6HK7TjwbGTHp01LMzHD1uo44l8CVV5Pb3J0KDiKiL9yW26MHwKg/FrXq8GYtGKebc7uaN7CYOBsqeVoWk76DDALJWe6z6KWf0y8oyjbyWb+6AcVEl0N2vDgyijEYAPihJzF6G+p/2pQQpSC+CSMwqHfdlyng1b5ltt3kuwz9/KRfDCxpqwK5jjs5sdzUstW+YFTPPXWqoH5mvbSBTAp4ovLCV4cT+NeLEUz3dhmzCgwOENBvWPJ2oMb6WSoLJ8mGVSnFdF7xfK+mq4qJu2rEggz5DOCtwjCt32gLAs4oEwQmRYX4f9U8i0cptiv4gpsqr3adRUvsC4WqlrrEVAw4qLPHEBNSg/xeYOmLOczmXUQBE4/iYTpxM1ReG7R8uAbePV7ZGJpAAHwYZbxaCGcjpksX5osp9NI5gDscVL3f9eSd+0o2dRts/KYmcxcI4rQ22q1cuV3Y7XMp3SThkKYCiojt59ZW8zspbcw8gWmuKdqcLIjtGciXHwjxFP+fxP9qKz5LEpHElK+bTp8rI+cNKYhFwKQxkf679jdPvksWXBvoA1n62Sq5wmis7f7xAh/V+W2kdbk5OwDqlLYFwck7TAmofKIOiqz7YYa8WXw+bvAhvs=
+    - secure: WCJX4Z5eUSrEouchWsuFHAxSiOKYEgbOMi6FXmV3NSROa1fKGLmQxG5z0H7vIOivpJCIRTjuruhucXagDx3B7UpRlZonsNlDjANCpX6k7k2mQe9Kth+qzROMkh0cr8eHmvWo1vCXv+jRUo4Zpk+RN4UV6zCbCqT3w1KZ2erzeQ+LjFzsamhrp+HhLb51sgi7Q0FuVwYXHxqQyqp+0oXwH+qcsPAOR8zT2C4SmhPF22RLvn7Xd1BmQO5zBpSj2wmCdM/hBZUucsy+CRvTRaJIhkW46piTQI/LwRWpJOOQ3uSvk87OuAsmsyhmSbfbq77ep01QySKwpbiA4zDrXIJ8HAmlDkDOdYNfVIwbAib83ovlnR/3Bzv2Ahx3PwEpxsQVK0wE0guDhmMalRwnaMvLZW/paA0yZ3yCZ/56mdTpKpMeysNZogjPP7sIdzqYAgyfL71Oz3Y3qbTEmGWAfSHYrE3Pl1gVmGUBN97ngSN9M3X+Ig4Zs+dBxt+kTjdgjQMDH4t9YzjAY/mcJIIKmk3Hn8MH9cJHwSdRiUl+h0VQvw7Ll0MHFxFx9MPIlcrccrx4apiSYk9KnMVfxOcXLh2G5r8peEvfjdAOLpjiIs2d8vFR9D9jNajEyqLlSTgaUTXBXmhrXG5imaFcHqS3fKzWgaJtlGsWnycvxWKnSMp6v8o=
+
 install:
-  - pip install -r requirements.txt
+  - pip install pip -U
+  - curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
+  - source $HOME/.poetry/env
+  - poetry install --no-interaction
+  - poetry build --no-interaction
+
 before_script:
-  - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"
-  - sleep 3 # give xvfb some time to start
-script: python setup.py test
+  - export DISPLAY=:99.0
+  - sh -e /etc/init.d/xvfb start
+  - sleep 3
+
+script:
+  - poetry check
+  - poetry run pytest
+
 deploy:
-  provider: pypi
-  user: constverum
-  password:
-    secure: HvvKX8puxOp7JCqbMWGk1GBpOWuN9ctCqYINQ6jUey6a2hNX+6gUlZSbCzHfKckPdN1SVPn6sskPNH1EgCGS1/nU109tDa7cxSxJC2fhP1g4vhwfas1c9huCqauG1I8vtLv/OVTz+2duxKeq3B0EblQ6vM/0z7b8drkCxZIG8my8oMJ94cNzyXGf0V8uvavgvRLB64TAReYAugePH/W9ZgdxRqHqbM+bp7EeMXckuMS1lM1d2Y44D4+E2OkNW0i10mlmf467MhIjmDA8nwjDNEexWfMcTxiOthSe4eZ+QcuNEdpfaLTxgssFa8sX6ExW8nC3e/EQlaIZrVmx/RlxQOFDrHPXCw5dR+KtDSyeLODWRnXJqgCOZ7HX8KA0DnC6+ejTlIyAiC/I1ZbjzTvv1lpVQ4sOYbvzGb/7i+LrAkhyjQy3yvS+mhSatf+dS2oWVhgS05fXeIRtea1r++af0BAzOolqAyN2Uyx1QVFTliECwPUsr2fvE/ZOfoLrMSrYMTI1inel2qN/56NCBEz/O60wnjFtXkBqPeP+J0eXMEcwOdQZ3q3fQTUNr5Vv9VlwLj5WgqjB8yQHAaoraSCvaXVmIkpLc5vTY0VjCWyctAN/AlqqhVl9kmWO1zqi3aXMwjNMLUT8zY30256TX4fMhLH5y0wtfYjI97CUcg0lkdQ=
-  distributions: sdist bdist_wheel
+  provider: script
+  script: poetry publish --no-interaction --username "$PYPI_USERNAME" --password "$PYPI_PASSWORD"
   on:
     tags: true
     branch: master
