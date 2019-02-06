@@ -2,11 +2,7 @@
 
 from enum import Enum, auto
 
-
-__all__ = (
-    'ChartType',
-    'TimeFrame',
-)
+__all__ = ('ChartType', 'TimeFrame')
 
 
 class ChartType(Enum):
@@ -25,6 +21,7 @@ class TimeFrame(Enum):
     D1 = auto()
     W1 = auto()
     MN = auto()
+
 
 ANNUAL_PERIOD = 252  # number of trading days in a year
 

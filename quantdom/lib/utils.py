@@ -12,7 +12,6 @@ from functools import wraps
 
 from PyQt5 import QtCore
 
-
 __all__ = (
     'BASE_DIR',
     'Settings',
@@ -29,7 +28,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 def get_data_path(path=''):
     data_path = QtCore.QStandardPaths.writableLocation(
-        QtCore.QStandardPaths.AppDataLocation)
+        QtCore.QStandardPaths.AppDataLocation
+    )
     data_path = os.path.join(data_path, path)
     os.makedirs(data_path, mode=0o755, exist_ok=True)
     return data_path
@@ -51,9 +51,12 @@ def timeit(fn):
         t = time.time()
         res = fn(*args, **kwargs)
         logger = logging.getLogger('runtime')
-        logger.debug('%s.%s: %.4f sec' % (
-            fn.__module__, fn.__qualname__, time.time() - t))
+        logger.debug(
+            '%s.%s: %.4f sec'
+            % (fn.__module__, fn.__qualname__, time.time() - t)
+        )
         return res
+
     return wrapper
 
 
@@ -72,8 +75,8 @@ def strategies_from_file(filepath):
     spec.loader.exec_module(module)
 
     is_strategy = lambda _class: (
-        inspect.isclass(_class) and
-        issubclass(_class, AbstractStrategy) and
-        _class.__name__ != 'AbstractStrategy'
+        inspect.isclass(_class)
+        and issubclass(_class, AbstractStrategy)
+        and _class.__name__ != 'AbstractStrategy'
     )
     return [_class for _, _class in inspect.getmembers(module, is_strategy)]

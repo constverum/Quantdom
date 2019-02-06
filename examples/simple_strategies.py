@@ -1,9 +1,9 @@
 from quantdom import AbstractStrategy, Order, Portfolio
 
-class ThreeBarStrategy(AbstractStrategy):
 
+class ThreeBarStrategy(AbstractStrategy):
     def init(self, high_bars=3, low_bars=3):
-        Portfolio.initial_balance = 100000  # default value
+        Portfolio.initial_balance = 100_000  # default value
         self.seq_low_bars = 0
         self.seq_high_bars = 0
         self.signal = None
@@ -24,7 +24,9 @@ class ThreeBarStrategy(AbstractStrategy):
             if not self.last_position:
                 self.last_position = Order.open(**props)
             elif self.last_position.type != self.signal:
-                Order.close(self.last_position, price=quote.open, time=quote.time)
+                Order.close(
+                    self.last_position, price=quote.open, time=quote.time
+                )
                 self.last_position = Order.open(**props)
             self.signal = False
             self.seq_high_bars = self.seq_low_bars = 0

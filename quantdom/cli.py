@@ -19,26 +19,28 @@ def create_parser():
         epilog='''Run '%(prog)s <command> --help'
                   for more information on a command.
                   Suggestions and bug reports are greatly appreciated:
-                  https://github.com/constverum/Quantdom/issues''')
+                  https://github.com/constverum/Quantdom/issues''',
+    )
     parser.add_argument(
-        '--debug',
-        action='store_true',
-        help='Run in debug mode')
+        '--debug', action='store_true', help='Run in debug mode'
+    )
     parser.add_argument(
         '--log',
         nargs='?',
         default=logging.CRITICAL,
         choices=['NOTSET', 'DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'],
-        help='Logging level')
+        help='Logging level',
+    )
     parser.add_argument(
-        '--version', '-v',
+        '--version',
+        '-v',
         action='version',
         version='%(prog)s {v}'.format(v=version),
-        help='Show program\'s version number and exit')
+        help='Show program\'s version number and exit',
+    )
     parser.add_argument(
-        '--help', '-h',
-        action='help',
-        help='Show this help message and exit')
+        '--help', '-h', action='help', help='Show this help message and exit'
+    )
     return parser
 
 
@@ -52,6 +54,7 @@ def cli(args=sys.argv[1:]):
     logging.basicConfig(
         format='%(asctime)s - %(levelname)s - %(name)s - %(message)s',
         datefmt='[%H:%M:%S]',
-        level=ns.log)
+        level=ns.log,
+    )
 
     main(debug=ns.debug)

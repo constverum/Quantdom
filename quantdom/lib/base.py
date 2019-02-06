@@ -3,26 +3,27 @@
 from enum import Enum, auto
 
 import numpy as np
-
 import pandas as pd
 
 from .const import ChartType, TimeFrame
 
-
-__all__ = (
-    'Indicator',
-    'Symbol',
-    'Quotes',
-)
+__all__ = ('Indicator', 'Symbol', 'Quotes')
 
 
 class BaseQuotes(np.recarray):
     def __new__(cls, shape=None, dtype=None, order='C'):
-        dt = np.dtype([
-            ('id', int), ('time', float), ('open', float),
-            ('high', float), ('low', float), ('close', float),
-            ('volume', int)])
-        shape = shape or (1, )
+        dt = np.dtype(
+            [
+                ('id', int),
+                ('time', float),
+                ('open', float),
+                ('high', float),
+                ('low', float),
+                ('close', float),
+                ('volume', int),
+            ]
+        )
+        shape = shape or (1,)
         return np.ndarray.__new__(cls, shape, (np.record, dt), order=order)
 
     def _nan_to_closest_num(self):
@@ -32,12 +33,17 @@ class BaseQuotes(np.recarray):
             if not mask.size:
                 continue
             self[col][mask] = np.interp(
-                np.flatnonzero(mask), np.flatnonzero(~mask), self[col][~mask])
+                np.flatnonzero(mask), np.flatnonzero(~mask), self[col][~mask]
+            )
 
     def _set_time_frame(self):
         tf = {
-            1: TimeFrame.M1, 5: TimeFrame.M5, 15: TimeFrame.M15,
-            30: TimeFrame.M30, 60: TimeFrame.H1, 240: TimeFrame.H4,
+            1: TimeFrame.M1,
+            5: TimeFrame.M5,
+            15: TimeFrame.M15,
+            30: TimeFrame.M30,
+            60: TimeFrame.H1,
+            240: TimeFrame.H4,
             1440: TimeFrame.D1,
         }
         minutes = int(np.diff(self.time[-10:]).min() / 60)
@@ -51,14 +57,16 @@ class BaseQuotes(np.recarray):
             data.reset_index(inplace=True)
             data.insert(0, 'id', data.index)
             data.Date = self.convert_dates(data.Date)
-            data = data.rename(columns={
-                'Date': 'time',
-                'Open': 'open',
-                'High': 'high',
-                'Low': 'low',
-                'Close': 'close',
-                'Volume': 'volume',
-            })
+            data = data.rename(
+                columns={
+                    'Date': 'time',
+                    'Open': 'open',
+                    'High': 'high',
+                    'Low': 'low',
+                    'Close': 'close',
+                    'Volume': 'volume',
+                }
+            )
             for name in self.dtype.names:
                 self[name] = data[name]
         elif isinstance(data, (np.recarray, BaseQuotes)):
@@ -91,7 +99,7 @@ class Symbol:
         if self.mode in [self.FOREX, self.CFD]:
             # number of units of the commodity, currency
             # or financial asset in one lot
-            self.contract_size = 100000  # (100000 == 1 Lot)
+            self.contract_size = 100_000  # (100000 == 1 Lot)
         elif self.mode == self.FUTURES:
             # cost of a single price change point ($10) /
             # one minimum price movement
@@ -108,8 +116,9 @@ class Symbol:
 
 
 class Indicator:
-    def __init__(self, label=None, window=None, data=None,
-                 tp=None, base=None, **kwargs):
+    def __init__(
+        self, label=None, window=None, data=None, tp=None, base=None, **kwargs
+    ):
         self.label = label
         self.window = window
         self.data = data or [0]

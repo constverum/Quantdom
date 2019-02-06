@@ -2,15 +2,12 @@
 
 from datetime import datetime
 
-from PyQt5 import QtCore, QtGui
-
 import numpy as np
-
 import pyqtgraph as pg
+from PyQt5 import QtCore, QtGui
 
 from .portfolio import Order, Portfolio, Position
 from .utils import fromtimestamp
-
 
 __all__ = (
     'OptimizatimizedResultsTable',
@@ -29,13 +26,16 @@ class ResultsTable(QtGui.QTableWidget):
     def __init__(self):
         super().__init__()
         self.setColumnCount(len(Portfolio.performance.columns))
-        rows = sum([2 if 'separated' in props else 1
-                    for props in Portfolio.performance.rows.values()])
+        rows = sum(
+            [
+                2 if 'separated' in props else 1
+                for props in Portfolio.performance.rows.values()
+            ]
+        )
         self.setRowCount(rows)
         self.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
         self.setHorizontalHeaderLabels(Portfolio.performance.columns)
-        self.horizontalHeader().setSectionResizeMode(
-            QtGui.QHeaderView.Stretch)
+        self.horizontalHeader().setSectionResizeMode(QtGui.QHeaderView.Stretch)
 
         # TODO: make cols editable (show/hide)
 
@@ -46,14 +46,12 @@ class ResultsTable(QtGui.QTableWidget):
             for prop_key, props in rows:
                 if props.get('separated', False):
                     # add a blank row
-                    self.setVerticalHeaderItem(
-                        irow, QtGui.QTableWidgetItem(''))
+                    self.setVerticalHeaderItem(irow, QtGui.QTableWidgetItem(''))
                     irow += 1
                 units = props['units']
                 header = props['header']
                 colored = props['colored']
-                self.setVerticalHeaderItem(
-                    irow, QtGui.QTableWidgetItem(header))
+                self.setVerticalHeaderItem(irow, QtGui.QTableWidgetItem(header))
                 val = getattr(Portfolio.performance[col], prop_key)
                 if isinstance(val, float):
                     sval = '%.2f %s' % (val, units)
@@ -63,12 +61,15 @@ class ResultsTable(QtGui.QTableWidget):
                     sval = '%s %s' % (val.strftime('%Y.%m.%d'), units)
                 item = QtGui.QTableWidgetItem(sval)
                 item.setTextAlignment(
-                    QtCore.Qt.AlignVCenter | QtCore.Qt.AlignRight)
+                    QtCore.Qt.AlignVCenter | QtCore.Qt.AlignRight
+                )
                 item.setFlags(
-                    QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+                    QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled
+                )
                 if colored:
-                    color = (self.positive_color if val > 0 else
-                             self.negative_color)
+                    color = (
+                        self.positive_color if val > 0 else self.negative_color
+                    )
                     item.setForeground(color)
                 self.setItem(irow, icol, item)
                 irow += 1
@@ -76,17 +77,32 @@ class ResultsTable(QtGui.QTableWidget):
 
 class TradesTable(QtGui.QTableWidget):
 
-    cols = np.array([
-        ('Type', 'type'), ('Symbol', 'symbol'),
-        ('Volume', 'volume'),
-        ('Entry', 'entry'), ('Exit', 'exit'),
-        ('Profit  $', 'abs'), ('Profit %', 'perc'), ('Bars', 'bars'),
-        ('Profit on Bar', 'on_bar'), ('Total Profit', 'total_profit'),
-        ('MAE', 'mae'), ('MFE', 'mfe'),
-        ('Comment', 'comment')])
+    cols = np.array(
+        [
+            ('Type', 'type'),
+            ('Symbol', 'symbol'),
+            ('Volume', 'volume'),
+            ('Entry', 'entry'),
+            ('Exit', 'exit'),
+            ('Profit  $', 'abs'),
+            ('Profit %', 'perc'),
+            ('Bars', 'bars'),
+            ('Profit on Bar', 'on_bar'),
+            ('Total Profit', 'total_profit'),
+            ('MAE', 'mae'),
+            ('MFE', 'mfe'),
+            ('Comment', 'comment'),
+        ]
+    )
     colored_cols = (
-        'type', 'abs', 'perc', 'total_profit',
-        'mae', 'mfe', 'on_bar')
+        'type',
+        'abs',
+        'perc',
+        'total_profit',
+        'mae',
+        'mfe',
+        'on_bar',
+    )
     fg_positive_color = pg.mkColor('#0000cc')
     fg_negative_color = pg.mkColor('#cc0000')
     bg_positive_color = pg.mkColor('#e3ffe3')
@@ -111,8 +127,8 @@ class TradesTable(QtGui.QTableWidget):
                 if col == 'type':
                     val, fg_color = (
                         ('▲ Buy', self.fg_positive_color)
-                        if trade[col] == Order.BUY else
-                        ('▼ Sell', self.fg_negative_color)
+                        if trade[col] == Order.BUY
+                        else ('▼ Sell', self.fg_negative_color)
                     )
                 elif col == 'status':
                     val = 'Open' if trade[col] == Position.OPEN else 'Closed'
@@ -131,8 +147,11 @@ class TradesTable(QtGui.QTableWidget):
                     s_val = '%.2f' % val
                 elif isinstance(val, datetime):
                     time = val.strftime('%Y.%m.%d %H:%M')
-                    price = (trade['open_price'] if col == 'entry' else
-                             trade['close_price'])
+                    price = (
+                        trade['open_price']
+                        if col == 'entry'
+                        else trade['close_price']
+                    )
                     # name = (trade['entry_name'] if col == 'entry' else
                     #         trade['exit_name'])
                     s_val = '%s at $%s' % (time, price)
@@ -141,20 +160,29 @@ class TradesTable(QtGui.QTableWidget):
 
                 item = QtGui.QTableWidgetItem(s_val)
                 align = QtCore.Qt.AlignVCenter
-                align |= (QtCore.Qt.AlignLeft
-                          if col in ('type', 'entry', 'exit') else
-                          QtCore.Qt.AlignRight)
+                align |= (
+                    QtCore.Qt.AlignLeft
+                    if col in ('type', 'entry', 'exit')
+                    else QtCore.Qt.AlignRight
+                )
                 item.setTextAlignment(align)
                 item.setFlags(
-                    QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
-                bg_color = (self.bg_positive_color if trade['abs'] >= 0 else
-                            self.bg_negative_color)
+                    QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled
+                )
+                bg_color = (
+                    self.bg_positive_color
+                    if trade['abs'] >= 0
+                    else self.bg_negative_color
+                )
                 item.setBackground(bg_color)
 
                 if col in self.colored_cols:
                     if fg_color is None:
-                        fg_color = (self.fg_positive_color if val >= 0 else
-                                    self.fg_negative_color)
+                        fg_color = (
+                            self.fg_positive_color
+                            if val >= 0
+                            else self.fg_negative_color
+                        )
                     item.setForeground(fg_color)
                 self.setItem(irow, icol, item)
         self.resizeColumnsToContents()
@@ -168,8 +196,7 @@ class OptimizationTable(QtGui.QTableWidget):
         super().__init__()
         self.setColumnCount(len(self.cols))
         self.setHorizontalHeaderLabels(self.cols)
-        self.horizontalHeader().setSectionResizeMode(
-            QtGui.QHeaderView.Stretch)
+        self.horizontalHeader().setSectionResizeMode(QtGui.QHeaderView.Stretch)
         self.verticalHeader().hide()
 
     def plot(self, strategy):
@@ -193,7 +220,8 @@ class OptimizationTable(QtGui.QTableWidget):
 
                 item = QtGui.QTableWidgetItem(str(val))
                 item.setTextAlignment(
-                    QtCore.Qt.AlignVCenter | QtCore.Qt.AlignRight)
+                    QtCore.Qt.AlignVCenter | QtCore.Qt.AlignRight
+                )
                 # item.setFlags(
                 #   QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
                 self.setItem(irow, icol, item)
@@ -217,19 +245,22 @@ class OptimizationTable(QtGui.QTableWidget):
 class OptimizatimizedResultsTable(QtGui.QTableWidget):
 
     sort_col = 3  # net_profit_perc
-    main_cols = np.array([
-        ('net_profit_abs', 'Net Profit'),
-        ('net_profit_perc', 'Net Profit %'),
-        ('year_profit', 'Year Profit %'),  # Annual Profit ?
-        ('win_average_profit_perc', 'Average Profit % (per trade)'),
-        ('loss_average_profit_perc', 'Average Loss % (per trade)'),
-        ('max_drawdown_abs', 'Maximum Drawdown'),
-        ('total_trades', 'Number of Trades'),
-        ('win_trades_abs', 'Winning Trades'),
-        ('win_trades_perc', 'Winning Trades %'),
-        ('profit_factor', 'Profit Factor'),
-        ('recovery_factor', 'Recovery Factor'),
-        ('payoff_ratio', 'Payoff Ratio')])
+    main_cols = np.array(
+        [
+            ('net_profit_abs', 'Net Profit'),
+            ('net_profit_perc', 'Net Profit %'),
+            ('year_profit', 'Year Profit %'),  # Annual Profit ?
+            ('win_average_profit_perc', 'Average Profit % (per trade)'),
+            ('loss_average_profit_perc', 'Average Loss % (per trade)'),
+            ('max_drawdown_abs', 'Maximum Drawdown'),
+            ('total_trades', 'Number of Trades'),
+            ('win_trades_abs', 'Winning Trades'),
+            ('win_trades_perc', 'Winning Trades %'),
+            ('profit_factor', 'Profit Factor'),
+            ('recovery_factor', 'Recovery Factor'),
+            ('payoff_ratio', 'Payoff Ratio'),
+        ]
+    )
 
     def __init__(self):
         super().__init__()
@@ -253,9 +284,11 @@ class OptimizatimizedResultsTable(QtGui.QTableWidget):
                     val = '%.2f' % val
                 item = QtGui.QTableWidgetItem(str(val))
                 item.setTextAlignment(
-                    QtCore.Qt.AlignVCenter | QtCore.Qt.AlignRight)
+                    QtCore.Qt.AlignVCenter | QtCore.Qt.AlignRight
+                )
                 item.setFlags(
-                    QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+                    QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled
+                )
                 self.setItem(irow, i, item)
         self.resizeColumnsToContents()
         self.sortByColumn(self.sort_col, QtCore.Qt.DescendingOrder)

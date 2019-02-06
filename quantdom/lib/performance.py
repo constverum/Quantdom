@@ -10,7 +10,6 @@ from .base import Quotes
 from .const import ANNUAL_PERIOD
 from .utils import fromtimestamp, get_resource_path
 
-
 __all__ = (
     'BriefPerformance',
     'Performance',
@@ -21,24 +20,37 @@ __all__ = (
 
 
 REPORT_COLUMNS = ('All', 'Long', 'Short', 'Market')
-with codecs.open(get_resource_path('report_rows.json'),
-                 mode='r', encoding='utf-8') as f:
+with codecs.open(
+    get_resource_path('report_rows.json'), mode='r', encoding='utf-8'
+) as f:
     REPORT_ROWS = OrderedDict(json.load(f))
 
 
 class Stats(np.recarray):
     def __new__(cls, positions, shape=None, dtype=None, order='C'):
-        shape = shape or (len(positions['All']), )
-        dtype = np.dtype([
-            ('type', object), ('symbol', object), ('volume', float),
-            ('open_time', float), ('close_time', float),
-            ('open_price', float), ('close_price', float),
-            ('total_profit', float),
-            ('entry_name', object), ('exit_name', object),
-            ('status', object), ('comment', object),
-            ('abs', float), ('perc', float),
-            ('bars', float), ('on_bar', float),
-            ('mae', float), ('mfe', float)])
+        shape = shape or (len(positions['All']),)
+        dtype = np.dtype(
+            [
+                ('type', object),
+                ('symbol', object),
+                ('volume', float),
+                ('open_time', float),
+                ('close_time', float),
+                ('open_price', float),
+                ('close_price', float),
+                ('total_profit', float),
+                ('entry_name', object),
+                ('exit_name', object),
+                ('status', object),
+                ('comment', object),
+                ('abs', float),
+                ('perc', float),
+                ('bars', float),
+                ('on_bar', float),
+                ('mae', float),
+                ('mfe', float),
+            ]
+        )
         dt = [(col, dtype) for col in REPORT_COLUMNS]
         return np.ndarray.__new__(cls, shape, (np.record, dt), order=order)
 
@@ -63,14 +75,16 @@ class Stats(np.recarray):
         self[col][i].abs = p.profit
         self[col][i].perc = p.profit_perc
 
-        quotes_on_trade = Quotes[p.id_bar_open:p.id_bar_close]
+        quotes_on_trade = Quotes[p.id_bar_open : p.id_bar_close]
 
         if not quotes_on_trade.size:
             # if position was opened and closed on the last bar
-            quotes_on_trade = Quotes[p.id_bar_open:p.id_bar_close + 1]
+            quotes_on_trade = Quotes[p.id_bar_open : p.id_bar_close + 1]
 
-        kwargs = {'low': quotes_on_trade.low.min(),
-                  'high': quotes_on_trade.high.max()}
+        kwargs = {
+            'low': quotes_on_trade.low.min(),
+            'high': quotes_on_trade.high.max(),
+        }
         self[col][i].mae = p.calc_mae(**kwargs)
         self[col][i].mfe = p.calc_mfe(**kwargs)
 
@@ -81,29 +95,44 @@ class Stats(np.recarray):
 
 class BriefPerformance(np.recarray):
     def __new__(cls, shape=None, dtype=None, order='C'):
-        dt = np.dtype([
-            ('kwargs', object),
-            ('net_profit_abs', float), ('net_profit_perc', float),
-            ('year_profit', float), ('win_average_profit_perc', float),
-            ('loss_average_profit_perc', float), ('max_drawdown_abs', float),
-            ('total_trades', int), ('win_trades_abs', int),
-            ('win_trades_perc', float), ('profit_factor', float),
-            ('recovery_factor', float), ('payoff_ratio', float)])
-        shape = shape or (1, )
+        dt = np.dtype(
+            [
+                ('kwargs', object),
+                ('net_profit_abs', float),
+                ('net_profit_perc', float),
+                ('year_profit', float),
+                ('win_average_profit_perc', float),
+                ('loss_average_profit_perc', float),
+                ('max_drawdown_abs', float),
+                ('total_trades', int),
+                ('win_trades_abs', int),
+                ('win_trades_perc', float),
+                ('profit_factor', float),
+                ('recovery_factor', float),
+                ('payoff_ratio', float),
+            ]
+        )
+        shape = shape or (1,)
         return np.ndarray.__new__(cls, shape, (np.record, dt), order=order)
 
     def _days_count(self, positions):
         if hasattr(self, 'days'):
             return self.days
-        self.days = ((fromtimestamp(positions[-1].close_time) -
-                      fromtimestamp(positions[0].open_time)).days
-                     if positions else 1)
+        self.days = (
+            (
+                fromtimestamp(positions[-1].close_time)
+                - fromtimestamp(positions[0].open_time)
+            ).days
+            if positions
+            else 1
+        )
         return self.days
 
     def add(self, initial_balance, positions, i, kwargs):
         position_count = len(positions)
         profit = np.recarray(
-            (position_count, ), dtype=[('abs', float), ('perc', float)])
+            (position_count,), dtype=[('abs', float), ('perc', float)]
+        )
         for n, position in enumerate(positions):
             profit[n].abs = position.profit
             profit[n].perc = position.profit_perc
@@ -113,7 +142,7 @@ class BriefPerformance(np.recarray):
         s.net_profit_perc = np.sum(profit.perc)
         days = self._days_count(positions)
         gain_factor = (s.net_profit_abs + initial_balance) / initial_balance
-        s.year_profit = ((gain_factor ** (365 / days) - 1) * 100)
+        s.year_profit = (gain_factor ** (365 / days) - 1) * 100
         s.win_average_profit_perc = np.mean(profit.perc[profit.perc > 0])
         s.loss_average_profit_perc = np.mean(profit.perc[profit.perc < 0])
         s.max_drawdown_abs = profit.abs.min()
@@ -176,34 +205,42 @@ class Performance:
         lt_zero_perc = stats[stats.perc < 0].perc
         los_bars = stats[stats.perc < 0].bars
 
-        col.average_profit_abs = (
-            np.mean(profit_abs) if profit_abs.size else 0)
+        col.average_profit_abs = np.mean(profit_abs) if profit_abs.size else 0
         col.average_profit_perc = (
-            np.mean(profit_perc) if profit_perc.size else 0)
+            np.mean(profit_perc) if profit_perc.size else 0
+        )
         col.bars_on_trade = np.mean(bars) if bars.size else 0
         col.bar_profit = np.mean(on_bar) if on_bar.size else 0
 
         col.win_average_profit_abs = (
-            np.mean(gt_zero_abs) if gt_zero_abs.size else 0)
+            np.mean(gt_zero_abs) if gt_zero_abs.size else 0
+        )
         col.win_average_profit_perc = (
-            np.mean(gt_zero_perc) if gt_zero_perc.size else 0)
+            np.mean(gt_zero_perc) if gt_zero_perc.size else 0
+        )
         col.win_bars_on_trade = np.mean(win_bars) if win_bars.size else 0
 
         col.loss_average_profit_abs = (
-            np.mean(lt_zero_abs) if lt_zero_abs.size else 0)
+            np.mean(lt_zero_abs) if lt_zero_abs.size else 0
+        )
         col.loss_average_profit_perc = (
-            np.mean(lt_zero_perc) if lt_zero_perc.size else 0)
+            np.mean(lt_zero_perc) if lt_zero_perc.size else 0
+        )
         col.loss_bars_on_trade = np.mean(los_bars) if los_bars.size else 0
 
         col.win_trades_abs = len(gt_zero_abs)
         col.win_trades_perc = (
             round(col.win_trades_abs / col.total_trades * 100, 2)
-            if col.total_trades else 0)
+            if col.total_trades
+            else 0
+        )
 
         col.loss_trades_abs = len(lt_zero_abs)
         col.loss_trades_perc = (
             round(col.loss_trades_abs / col.total_trades * 100, 2)
-            if col.total_trades else 0)
+            if col.total_trades
+            else 0
+        )
 
         col.total_profit = np.sum(gt_zero_abs)
         col.total_loss = np.sum(lt_zero_abs)
@@ -214,37 +251,51 @@ class Performance:
 
         # https://financial-calculators.com/roi-calculator
 
-        days = ((fromtimestamp(positions[-1].close_time) -
-                 fromtimestamp(positions[0].open_time)).days
-                if positions else 1)
+        days = (
+            (
+                fromtimestamp(positions[-1].close_time)
+                - fromtimestamp(positions[0].open_time)
+            ).days
+            if positions
+            else 1
+        )
         gain_factor = (
-            (col.net_profit_abs + col.initial_balance) / col.initial_balance)
-        col.year_profit = ((gain_factor ** (365 / days) - 1) * 100)
-        col.month_profit = ((gain_factor ** (365 / days / 12) - 1) * 100)
+            col.net_profit_abs + col.initial_balance
+        ) / col.initial_balance
+        col.year_profit = (gain_factor ** (365 / days) - 1) * 100
+        col.month_profit = (gain_factor ** (365 / days / 12) - 1) * 100
 
         col.max_profit_abs = stats.abs.max()
         col.max_profit_perc = stats.perc.max()
         col.max_profit_abs_day = fromtimestamp(
-            stats.close_time[stats.abs == col.max_profit_abs][0])
+            stats.close_time[stats.abs == col.max_profit_abs][0]
+        )
         col.max_profit_perc_day = fromtimestamp(
-            stats.close_time[stats.perc == col.max_profit_perc][0])
+            stats.close_time[stats.perc == col.max_profit_perc][0]
+        )
 
         col.max_drawdown_abs = stats.abs.min()
         col.max_drawdown_perc = stats.perc.min()
         col.max_drawdown_abs_day = fromtimestamp(
-            stats.close_time[stats.abs == col.max_drawdown_abs][0])
+            stats.close_time[stats.abs == col.max_drawdown_abs][0]
+        )
         col.max_drawdown_perc_day = fromtimestamp(
-            stats.close_time[stats.perc == col.max_drawdown_perc][0])
+            stats.close_time[stats.perc == col.max_drawdown_perc][0]
+        )
 
         col.profit_factor = (
-            abs(col.total_profit / col.total_loss)
-            if col.total_loss else 0)
+            abs(col.total_profit / col.total_loss) if col.total_loss else 0
+        )
         col.recovery_factor = (
             abs(col.net_profit_abs / col.max_drawdown_abs)
-            if col.max_drawdown_abs else 0)
+            if col.max_drawdown_abs
+            else 0
+        )
         col.payoff_ratio = (
             abs(col.win_average_profit_abs / col.loss_average_profit_abs)
-            if col.loss_average_profit_abs else 0)
+            if col.loss_average_profit_abs
+            else 0
+        )
         col.sharpe_ratio = annualized_sharpe_ratio(stats)
         col.sortino_ratio = annualized_sortino_ratio(stats)
 
@@ -277,7 +328,7 @@ def day_percentage_returns(stats):
         return returns
 
     _returns = np.zeros(ANNUAL_PERIOD)
-    _returns[:len(returns)] = returns
+    _returns[: len(returns)] = returns
     return _returns
 
 

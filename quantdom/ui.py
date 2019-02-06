@@ -7,18 +7,23 @@ from datetime import datetime
 
 from PyQt5 import QtCore, QtGui
 
-from .lib import (  # noqa
-    Quotes, Symbol, Portfolio,
-    EquityChart, QuotesChart,
-    ResultsTable, TradesTable, OptimizationTable,
-    OptimizatimizedResultsTable, Settings,
-    get_symbols, get_quotes, strategies_from_file,
+from .lib import (
+    EquityChart,
+    OptimizatimizedResultsTable,
+    OptimizationTable,
+    Portfolio,
+    Quotes,
+    QuotesChart,
+    ResultsTable,
+    Settings,
+    Symbol,
+    TradesTable,
+    get_quotes,
+    get_symbols,
+    strategies_from_file,
 )
 
-
-__all__ = (
-    'MainWidget',
-)
+__all__ = ('MainWidget',)
 
 
 logger = logging.getLogger(__name__)
@@ -50,8 +55,9 @@ class DataTabWidget(QtGui.QWidget):
 
         self.symbols_loader = SymbolsLoaderThread()
         self.symbols_loader.started.connect(self.on_symbols_loading)
-        self.symbols_loader.symbols_loaded.connect(self.on_symbols_loaded,
-                                                   QtCore.Qt.QueuedConnection)
+        self.symbols_loader.symbols_loaded.connect(
+            self.on_symbols_loaded, QtCore.Qt.QueuedConnection
+        )
         self.symbols_loader.start()
 
         self.date_from = self.shares_date_from.date().toPyDate()
@@ -69,11 +75,14 @@ class DataTabWidget(QtGui.QWidget):
         self.import_data_btn.clicked.connect(self.open_file)
 
         self.external_layout.addWidget(
-            self.import_data_name, 0, QtCore.Qt.AlignCenter)
+            self.import_data_name, 0, QtCore.Qt.AlignCenter
+        )
         self.external_layout.addWidget(
-            self.import_data_label, 0, QtCore.Qt.AlignCenter)
+            self.import_data_label, 0, QtCore.Qt.AlignCenter
+        )
         self.external_layout.addWidget(
-            self.import_data_btn, 0, QtCore.Qt.AlignCenter)
+            self.import_data_btn, 0, QtCore.Qt.AlignCenter
+        )
 
         self.select_source.addTab(self.external_tab, 'Custom data')
 
@@ -93,7 +102,8 @@ class DataTabWidget(QtGui.QWidget):
         self.shares_date_to.setMinimumDate(QtCore.QDate(1900, 1, 1))
         self.shares_date_to.setMaximumDate(QtCore.QDate(2030, 12, 31))
         self.shares_date_to.setDate(
-            QtCore.QDate(today.year, today.month, today.day))
+            QtCore.QDate(today.year, today.month, today.day)
+        )
         self.shares_date_to.setDisplayFormat('dd.MM.yyyy')
 
         self.shares_symbol_list = QtGui.QComboBox()
@@ -148,7 +158,8 @@ class DataTabWidget(QtGui.QWidget):
 
         # set default symbol
         self.shares_symbol_list.setCurrentIndex(
-            self.shares_symbol_list.findText(DEFAULT_TICKER))
+            self.shares_symbol_list.findText(DEFAULT_TICKER)
+        )
 
     def open_file(self):
         filename = QtGui.QFileDialog.getOpenFileName(
@@ -172,7 +183,8 @@ class DataTabWidget(QtGui.QWidget):
         get_quotes(
             symbol=self.symbol.ticker,
             date_from=self.date_from,
-            date_to=self.date_to)
+            date_to=self.date_to,
+        )
 
         self.data_updated.emit(self.symbol)
 
@@ -241,7 +253,6 @@ class StrategyBoxWidget(QtGui.QGroupBox):
 
 
 class QuotesTabWidget(QtGui.QWidget):
-
     def __init__(self, parent=None):
         super().__init__(parent)
         self.layout = QtGui.QVBoxLayout(self)
@@ -342,8 +353,9 @@ class OptimizationTabWidget(QtGui.QWidget):
 
         self.start_optimization_btn = QtGui.QPushButton('Start')
         self.start_optimization_btn.clicked.connect(self.start_optimization)
-        self.top_layout.addWidget(self.start_optimization_btn,
-                                  alignment=QtCore.Qt.AlignRight)
+        self.top_layout.addWidget(
+            self.start_optimization_btn, alignment=QtCore.Qt.AlignRight
+        )
 
         self.layout.addLayout(self.top_layout)
         self.layout.addLayout(self.table_layout)
@@ -377,7 +389,6 @@ class OptimizatimizedResultsTabWidget(QtGui.QWidget):
 
 
 class MainWidget(QtGui.QTabWidget):
-
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setDocumentMode(True)
@@ -390,8 +401,7 @@ class MainWidget(QtGui.QTabWidget):
         if self.count() >= 2:  # quotes tab is already exists
             return
         self.quotes_tab = QuotesTabWidget(self)
-        self.quotes_tab.strategy_box.run_backtest.connect(
-            self._run_backtest)
+        self.quotes_tab.strategy_box.run_backtest.connect(self._run_backtest)
         self.addTab(self.quotes_tab, 'Quotes')
 
     def _add_result_tabs(self):
@@ -401,7 +411,9 @@ class MainWidget(QtGui.QTabWidget):
         self.results_tab = ResultsTabWidget(self)
         self.trades_tab = TradesTabWidget(self)
         self.optimization_tab = OptimizationTabWidget(self)
-        self.optimization_tab.optimization_done.connect(self._add_optimized_results)  # noqa
+        self.optimization_tab.optimization_done.connect(
+            self._add_optimized_results
+        )  # noqa
         self.addTab(self.equity_tab, 'Equity')
         self.addTab(self.results_tab, 'Results')
         self.addTab(self.trades_tab, 'Trades')
@@ -417,7 +429,7 @@ class MainWidget(QtGui.QTabWidget):
         logger.debug('Run backtest')
         Portfolio.clear()
 
-        stg = strategy(symbols=[self.symbol, ])
+        stg = strategy(symbols=[self.symbol])
         stg.run()
 
         Portfolio.summarize()
@@ -427,8 +439,9 @@ class MainWidget(QtGui.QTabWidget):
         self.results_tab.update_table()
         self.trades_tab.update_table()
         self.optimization_tab.update_table(strategy=stg)
-        logger.debug('Count positions in the portfolio: %d',
-                     Portfolio.position_count())
+        logger.debug(
+            'Count positions in the portfolio: %d', Portfolio.position_count()
+        )
 
     def _add_optimized_results(self):
         self.addTab(OptimizatimizedResultsTabWidget(self), 'Optimized Results')

@@ -15,7 +15,6 @@ from pandas_datareader.nasdaq_trader import get_nasdaq_symbols
 from .base import Quotes
 from .utils import get_data_path, timeit
 
-
 __all__ = (
     'YahooQuotesLoader',
     'GoogleQuotesLoader',
@@ -60,8 +59,7 @@ class QuotesLoader:
     @classmethod
     @timeit
     def get_quotes(cls, symbol, date_from, date_to):
-        fpath = cls._get_file_path(
-            symbol, cls.timeframe, date_from, date_to)
+        fpath = cls._get_file_path(symbol, cls.timeframe, date_from, date_to)
         if os.path.exists(fpath):
             Quotes.new(cls._load_from_disk(fpath))
         else:
@@ -87,6 +85,7 @@ class GoogleQuotesLoader(QuotesLoader):
     def _get(cls, symbol, date_from, date_to):
         # FIXME: temporary fix
         from pandas_datareader.google.daily import GoogleDailyReader
+
         GoogleDailyReader.url = 'http://finance.google.com/finance/historical'
         return get_data_google(symbol, date_from, date_to)
 

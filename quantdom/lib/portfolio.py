@@ -10,16 +10,11 @@ from .base import Quotes
 from .performance import BriefPerformance, Performance, Stats
 from .utils import fromtimestamp, timeit
 
-
-__all__ = (
-    'Portfolio',
-    'Position',
-    'Order',
-)
+__all__ = ('Portfolio', 'Position', 'Order')
 
 
 class BasePortfolio:
-    def __init__(self, balance=100000, leverage=5):
+    def __init__(self, balance=100_000, leverage=5):
         self._initial_balance = balance
         self.balance = balance
         self.equity = None
@@ -66,16 +61,23 @@ class BasePortfolio:
     def _close_open_positions(self):
         for p in self.positions:
             if p.status == Position.OPEN:
-                p.close(price=Quotes[-1].open, volume=p.volume,
-                        time=Quotes[-1].time)
+                p.close(
+                    price=Quotes[-1].open, volume=p.volume, time=Quotes[-1].time
+                )
 
     def _get_market_position(self):
         p = self.positions[0]  # real postions
         p = Position(
-            symbol=p.symbol, ptype=Order.BUY, volume=p.volume,
-            price=Quotes[0].open, open_time=Quotes[0].time,
-            close_price=Quotes[-1].close, close_time=Quotes[-1].time,
-            id_bar_close=len(Quotes) - 1, status=Position.CLOSED)
+            symbol=p.symbol,
+            ptype=Order.BUY,
+            volume=p.volume,
+            price=Quotes[0].open,
+            open_time=Quotes[0].time,
+            close_price=Quotes[-1].close,
+            close_time=Quotes[-1].time,
+            id_bar_close=len(Quotes) - 1,
+            status=Position.CLOSED,
+        )
         p.profit = p.calc_profit(close_price=Quotes[-1].close)
         p.profit_perc = p.profit / self._initial_balance * 100
         return p
@@ -95,7 +97,8 @@ class BasePortfolio:
         """Buy and Hold."""
         p = self._get_market_position()
         self.buy_and_hold_curve = np.array(
-            [p.calc_profit(close_price=price) for price in Quotes.close])
+            [p.calc_profit(close_price=price) for price in Quotes.close]
+        )
 
     def _calc_long_short_curves(self):
         """Only Long/Short positions curve."""
@@ -115,8 +118,10 @@ class BasePortfolio:
                 profit = p.calc_profit(close_price=Quotes[ibar].close)
                 curve[ibar] = balance + profit
 
-        for name, curve in [('Long', self.long_curve),
-                            ('Short', self.short_curve)]:
+        for name, curve in [
+            ('Long', self.long_curve),
+            ('Short', self.short_curve),
+        ]:
             curve[:] = fill_zeros_with_last(curve)
             # taking into account the real balance after the last trade
             curve[-1] = np.sum(self.stats[name].abs)
@@ -154,7 +159,8 @@ class BasePortfolio:
                 strategy.start(**kwargs)
                 self._close_open_positions()
                 self.brief_performance.add(
-                    self._initial_balance, self.positions, i, kwargs)
+                    self._initial_balance, self.positions, i, kwargs
+                )
                 self.clear()
 
     @timeit
@@ -164,10 +170,12 @@ class BasePortfolio:
             'All': self.positions,
             'Long': [p for p in self.positions if p.type == Order.BUY],
             'Short': [p for p in self.positions if p.type == Order.SELL],
-            'Market': [self._get_market_position(), ],
+            'Market': [self._get_market_position()],
         }
         self.stats = Stats(positions)
-        self.performance = Performance(self._initial_balance, self.stats, positions)
+        self.performance = Performance(
+            self._initial_balance, self.stats, positions
+        )
         self._calc_curves()
 
 
@@ -187,15 +195,43 @@ class Position:
     CANCELED = PositionStatus.CANCELED
 
     __slots__ = (
-        'type', 'symbol', 'ticket', 'open_price', 'close_price', 'open_time',
-        'close_time', 'volume', 'sl', 'tp', 'status', 'profit', 'profit_perc',
-        'commis', 'id_bar_open', 'id_bar_close', 'entry_name', 'exit_name',
-        'total_profit', 'comment',
+        'type',
+        'symbol',
+        'ticket',
+        'open_price',
+        'close_price',
+        'open_time',
+        'close_time',
+        'volume',
+        'sl',
+        'tp',
+        'status',
+        'profit',
+        'profit_perc',
+        'commis',
+        'id_bar_open',
+        'id_bar_close',
+        'entry_name',
+        'exit_name',
+        'total_profit',
+        'comment',
     )
 
-    def __init__(self, symbol, ptype, price, volume, open_time, sl=None,
-                 tp=None, status=OPEN, entry_name='', exit_name='',
-                 comment='', **kwargs):
+    def __init__(
+        self,
+        symbol,
+        ptype,
+        price,
+        volume,
+        open_time,
+        sl=None,
+        tp=None,
+        status=OPEN,
+        entry_name='',
+        exit_name='',
+        comment='',
+        **kwargs,
+    ):
         self.type = ptype
         self.symbol = symbol
         self.ticket = None
@@ -226,7 +262,11 @@ class Position:
         _type = 'LONG' if self.type == Order.BUY else 'SHORT'
         time = fromtimestamp(self.open_time).strftime('%d.%m.%y %H:%M')
         return '%s/%s/[%s - %.4f]' % (
-            self.status.name, _type, time, self.open_price)
+            self.status.name,
+            _type,
+            time,
+            self.open_price,
+        )
 
     def close(self, price, time, volume=None):
         # TODO: allow closing only part of the volume
@@ -249,8 +289,10 @@ class Position:
         price_delta = (close_price - self.open_price) * factor
         if self.symbol.mode in [self.symbol.FOREX, self.symbol.CFD]:
             # Margin:  Lots*Contract_Size/Leverage
-            if (self.symbol.mode == self.symbol.FOREX and
-                    self.symbol.ticker[:3] == 'USD'):
+            if (
+                self.symbol.mode == self.symbol.FOREX
+                and self.symbol.ticker[:3] == 'USD'
+            ):
                 # Example: 'USD/JPY'
                 #          Прибыль       Размер   Объем     Текущий
                 #          в пунктах     пункта   позиции   курс
@@ -261,10 +303,17 @@ class Position:
                 # (1.00770-1.00595)/0.0001 = 17.5 пунктов
                 # (1.00770-1.00595)/0.0001*0.0001*100000*1/1.00770*1
                 _points = price_delta / self.symbol.tick_size
-                _profit = _points * self.symbol.tick_size * \
-                    self.symbol.contract_size / close_price * volume
-            elif (self.symbol.mode == self.symbol.FOREX and
-                    self.symbol.ticker[-3:] == 'USD'):
+                _profit = (
+                    _points
+                    * self.symbol.tick_size
+                    * self.symbol.contract_size
+                    / close_price
+                    * volume
+                )
+            elif (
+                self.symbol.mode == self.symbol.FOREX
+                and self.symbol.ticker[-3:] == 'USD'
+            ):
                 # Example: 'EUR/USD'
                 # Profit:      (close_price-open_price)*Contract_Size*Lots
                 # EUR/USD BUY: (1.05875-1.05850)*100000*1 = +$25 (без комиссии)
@@ -287,8 +336,12 @@ class Position:
             # http://americanclearing.ru/specifications.php
             # http://www.moex.com/ru/contract.aspx?code=RTS-3.18
             # http://www.cmegroup.com/trading/equity-index/us-index/e-mini-sandp500_contract_specifications.html
-            _profit = (price_delta * self.symbol.tick_value /
-                       self.symbol.tick_size * volume)
+            _profit = (
+                price_delta
+                * self.symbol.tick_value
+                / self.symbol.tick_size
+                * volume
+            )
         else:
             # shares
             _profit = price_delta * volume
@@ -331,8 +384,14 @@ class Order:
         # TODO: add margin calculation
         # and if the margin is not enough - do not open the position
         position = Position(
-            symbol=symbol, ptype=otype, price=price,
-            volume=volume, open_time=time, sl=sl, tp=tp)
+            symbol=symbol,
+            ptype=otype,
+            price=price,
+            volume=volume,
+            open_time=time,
+            sl=sl,
+            tp=tp,
+        )
         Portfolio.add_position(position)
         return position
 

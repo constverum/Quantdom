@@ -7,17 +7,13 @@ from abc import ABC, abstractmethod
 from .base import Quotes
 from .utils import timeit
 
-
-__all__ = (
-    'AbstractStrategy',
-)
+__all__ = ('AbstractStrategy',)
 
 
 logger = logging.getLogger(__name__)
 
 
 class AbstractStrategy(ABC):
-
     def __init__(self, name=None, period=None, symbols=None):
         self.name = name or self.__class__.__name__
         self.period = period

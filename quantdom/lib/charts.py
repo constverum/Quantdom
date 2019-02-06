@@ -1,21 +1,15 @@
 """Chart."""
 
-from PyQt5 import QtCore, QtGui
-
 import numpy as np
-
 import pyqtgraph as pg
+from PyQt5 import QtCore, QtGui
 
 from .base import Quotes
 from .const import ChartType
 from .portfolio import Order, Portfolio
 from .utils import fromtimestamp, timeit
 
-
-__all__ = (
-    'QuotesChart',
-    'EquityChart',
-)
+__all__ = ('QuotesChart', 'EquityChart')
 
 
 pg.setConfigOption('background', 'w')
@@ -30,14 +24,26 @@ class SampleLegendItem(pg.graphicsItems.LegendItem.ItemSample):
             negative = self.item[1].opts
             p.setPen(pg.mkPen(positive['pen']))
             p.setBrush(pg.mkBrush(positive['brush']))
-            p.drawPolygon(QtGui.QPolygonF([QtCore.QPointF(0, 0),
-                                           QtCore.QPointF(18, 0),
-                                           QtCore.QPointF(18, 18)]))
+            p.drawPolygon(
+                QtGui.QPolygonF(
+                    [
+                        QtCore.QPointF(0, 0),
+                        QtCore.QPointF(18, 0),
+                        QtCore.QPointF(18, 18),
+                    ]
+                )
+            )
             p.setPen(pg.mkPen(negative['pen']))
             p.setBrush(pg.mkBrush(negative['brush']))
-            p.drawPolygon(QtGui.QPolygonF([QtCore.QPointF(0, 0),
-                                           QtCore.QPointF(0, 18),
-                                           QtCore.QPointF(18, 18)]))
+            p.drawPolygon(
+                QtGui.QPolygonF(
+                    [
+                        QtCore.QPointF(0, 0),
+                        QtCore.QPointF(0, 18),
+                        QtCore.QPointF(18, 18),
+                    ]
+                )
+            )
         else:
             opts = self.item.opts
             p.setPen(pg.mkPen(opts['pen']))
@@ -51,8 +57,9 @@ class PriceAxis(pg.AxisItem):
 
     def tickStrings(self, vals, scale, spacing):
         digts = max(0, np.ceil(-np.log10(spacing * scale)))
-        return [('{:<8,.%df}' % digts).format(v).replace(',', ' ')
-                for v in vals]
+        return [
+            ('{:<8,.%df}' % digts).format(v).replace(',', ' ') for v in vals
+        ]
 
 
 class DateAxis(pg.AxisItem):
@@ -74,8 +81,16 @@ class DateAxis(pg.AxisItem):
 
 
 class CenteredTextItem(QtGui.QGraphicsTextItem):
-    def __init__(self, text='', parent=None, pos=(0, 0),
-                 pen=None, brush=None, valign=None, opacity=0.1):
+    def __init__(
+        self,
+        text='',
+        parent=None,
+        pos=(0, 0),
+        pen=None,
+        brush=None,
+        valign=None,
+        opacity=0.1,
+    ):
         super().__init__(text, parent)
 
         self.pen = pen
@@ -109,8 +124,7 @@ class AxisLabel(pg.GraphicsObject):
     bg_color = pg.mkColor('#dbdbdb')
     fg_color = pg.mkColor('#000000')
 
-    def __init__(self, parent=None, digits=0,
-                 color=None, opacity=1, **kwargs):
+    def __init__(self, parent=None, digits=0, color=None, opacity=1, **kwargs):
         super().__init__(parent)
         self.parent = parent
         self.opacity = opacity
@@ -160,9 +174,9 @@ class AxisLabel(pg.GraphicsObject):
 
 class XAxisLabel(AxisLabel):
 
-    text_flags = (QtCore.Qt.TextDontClip |
-                  QtCore.Qt.AlignCenter |
-                  QtCore.Qt.AlignTop)
+    text_flags = (
+        QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter | QtCore.Qt.AlignTop
+    )
 
     def tick_to_string(self, tick_pos):
         # TODO: change to actual period
@@ -185,9 +199,9 @@ class XAxisLabel(AxisLabel):
 
 class YAxisLabel(AxisLabel):
 
-    text_flags = (QtCore.Qt.TextDontClip |
-                  QtCore.Qt.AlignLeft |
-                  QtCore.Qt.AlignVCenter)
+    text_flags = (
+        QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter
+    )
 
     def tick_to_string(self, tick_pos):
         return ('{: ,.%df}' % self.digits).format(tick_pos).replace(',', ' ')
@@ -228,22 +242,32 @@ class CrossHairItem(pg.GraphicsObject):
         self.vline = self.parent.addLine(x=0, pen=self.pen, movable=False)
         self.hline = self.parent.addLine(y=0, pen=self.pen, movable=False)
 
-        self.proxy_moved = pg.SignalProxy(self.parent.scene().sigMouseMoved,
-                                          rateLimit=60, slot=self.mouseMoved)
+        self.proxy_moved = pg.SignalProxy(
+            self.parent.scene().sigMouseMoved,
+            rateLimit=60,
+            slot=self.mouseMoved,
+        )
 
-        self.yaxis_label = YAxisLabel(parent=self.yaxis, digits=digits, opacity=1)
+        self.yaxis_label = YAxisLabel(
+            parent=self.yaxis, digits=digits, opacity=1
+        )
 
         indicators = indicators or []
         if indicators:
             last_ind = indicators[-1]
             self.xaxis_label = XAxisLabel(
-                parent=last_ind.getAxis('bottom'), opacity=1)
+                parent=last_ind.getAxis('bottom'), opacity=1
+            )
             self.proxy_enter = pg.SignalProxy(
-                self.parent.sig_mouse_enter, rateLimit=60,
-                slot=lambda: self.mouseAction('Enter', False))
+                self.parent.sig_mouse_enter,
+                rateLimit=60,
+                slot=lambda: self.mouseAction('Enter', False),
+            )
             self.proxy_leave = pg.SignalProxy(
-                self.parent.sig_mouse_leave, rateLimit=60,
-                slot=lambda: self.mouseAction('Leave', False))
+                self.parent.sig_mouse_leave,
+                rateLimit=60,
+                slot=lambda: self.mouseAction('Leave', False),
+            )
         else:
             self.xaxis_label = XAxisLabel(parent=self.xaxis, opacity=1)
 
@@ -252,15 +276,22 @@ class CrossHairItem(pg.GraphicsObject):
             hl = i.addLine(y=0, pen=self.pen, movable=False)
             yl = YAxisLabel(parent=i.getAxis('right'), opacity=1)
             px_moved = pg.SignalProxy(
-                i.scene().sigMouseMoved, rateLimit=60, slot=self.mouseMoved)
+                i.scene().sigMouseMoved, rateLimit=60, slot=self.mouseMoved
+            )
             px_enter = pg.SignalProxy(
-                i.sig_mouse_enter, rateLimit=60,
-                slot=lambda: self.mouseAction('Enter', i))
+                i.sig_mouse_enter,
+                rateLimit=60,
+                slot=lambda: self.mouseAction('Enter', i),
+            )
             px_leave = pg.SignalProxy(
-                i.sig_mouse_leave, rateLimit=60,
-                slot=lambda: self.mouseAction('Leave', i))
+                i.sig_mouse_leave,
+                rateLimit=60,
+                slot=lambda: self.mouseAction('Leave', i),
+            )
             self.indicators[i] = {
-                'vl': vl, 'hl': hl, 'yl': yl,
+                'vl': vl,
+                'hl': hl,
+                'yl': yl,
                 'px': (px_moved, px_enter, px_leave),
             }
 
@@ -295,12 +326,16 @@ class CrossHairItem(pg.GraphicsObject):
             if self.activeIndicator:
                 mouse_point_ind = self.activeIndicator.mapToView(pos)
                 self.indicators[self.activeIndicator]['hl'].setY(
-                    mouse_point_ind.y())
+                    mouse_point_ind.y()
+                )
                 self.indicators[self.activeIndicator]['yl'].update_label(
-                    evt_post=pos, point_view=mouse_point_ind)
+                    evt_post=pos, point_view=mouse_point_ind
+                )
             else:
                 self.hline.setY(mouse_point.y())
-                self.yaxis_label.update_label(evt_post=pos, point_view=mouse_point)
+                self.yaxis_label.update_label(
+                    evt_post=pos, point_view=mouse_point
+                )
 
     def paint(self, p, *args):
         pass
@@ -320,12 +355,18 @@ class BarItem(pg.GraphicsObject):
         self.generatePicture()
 
     def _generate(self, p):
-        hl = np.array([QtCore.QLineF(q.id, q.low, q.id, q.high)
-                       for q in Quotes])
-        op = np.array([QtCore.QLineF(q.id - self.w, q.open, q.id, q.open)
-                       for q in Quotes])
-        cl = np.array([QtCore.QLineF(q.id + self.w, q.close, q.id, q.close)
-                       for q in Quotes])
+        hl = np.array(
+            [QtCore.QLineF(q.id, q.low, q.id, q.high) for q in Quotes]
+        )
+        op = np.array(
+            [QtCore.QLineF(q.id - self.w, q.open, q.id, q.open) for q in Quotes]
+        )
+        cl = np.array(
+            [
+                QtCore.QLineF(q.id + self.w, q.close, q.id, q.close)
+                for q in Quotes
+            ]
+        )
         lines = np.concatenate([hl, op, cl])
         long_bars = np.resize(Quotes.close > Quotes.open, len(lines))
         short_bars = np.resize(Quotes.close < Quotes.open, len(lines))
@@ -358,13 +399,15 @@ class CandlestickItem(BarItem):
     bear_brush = pg.mkBrush('#ff0000')
 
     def _generate(self, p):
-        rects = np.array([
-            QtCore.QRectF(q.id - self.w, q.open, self.w2, q.close - q.open)
-            for q in Quotes])
+        rects = np.array(
+            [
+                QtCore.QRectF(q.id - self.w, q.open, self.w2, q.close - q.open)
+                for q in Quotes
+            ]
+        )
 
         p.setPen(self.line_pen)
-        p.drawLines([QtCore.QLineF(q.id, q.low, q.id, q.high)
-                     for q in Quotes])
+        p.drawLines([QtCore.QLineF(q.id, q.low, q.id, q.high) for q in Quotes])
 
         p.setBrush(self.bull_brush)
         p.drawRects(*rects[Quotes.close > Quotes.open])
@@ -390,7 +433,8 @@ class QuotesChart(QtGui.QWidget):
 
         self.xaxis = DateAxis(orientation='bottom')
         self.xaxis.setStyle(
-            tickTextOffset=7, textFillLimits=[(0, 0.80)], showValues=False)
+            tickTextOffset=7, textFillLimits=[(0, 0.80)], showValues=False
+        )
 
         self.xaxis_ind = DateAxis(orientation='bottom')
         self.xaxis_ind.setStyle(tickTextOffset=7, textFillLimits=[(0, 0.80)])
@@ -404,8 +448,11 @@ class QuotesChart(QtGui.QWidget):
         self.layout.addWidget(self.splitter)
 
     def _show_text_signals(self, lbar, rbar):
-        signals = [sig for sig in self.signals_text_items[lbar:rbar]
-                   if isinstance(sig, CenteredTextItem)]
+        signals = [
+            sig
+            for sig in self.signals_text_items[lbar:rbar]
+            if isinstance(sig, CenteredTextItem)
+        ]
         if len(signals) <= 50:
             for sig in signals:
                 sig.show()
@@ -426,8 +473,12 @@ class QuotesChart(QtGui.QWidget):
         self.chart.showAxis('right')
         self.chart.addItem(_get_chart_points(self.style))
         self.chart.setLimits(
-            xMin=Quotes[0].id, xMax=Quotes[-1].id, minXRange=60,
-            yMin=Quotes.low.min() * 0.98, yMax=Quotes.high.max() * 1.02)
+            xMin=Quotes[0].id,
+            xMax=Quotes[-1].id,
+            minXRange=60,
+            yMin=Quotes.low.min() * 0.98,
+            yMax=Quotes.high.max() * 1.02,
+        )
         self.chart.showGrid(x=True, y=True)
         self.chart.setCursor(QtCore.Qt.BlankCursor)
         self.chart.sigXRangeChanged.connect(self._update_yrange_limits)
@@ -441,14 +492,18 @@ class QuotesChart(QtGui.QWidget):
             # ind.setAspectLocked(1)
             ind.setXLink(self.chart)
             ind.setLimits(
-                xMin=Quotes[0].id, xMax=Quotes[-1].id, minXRange=60,
-                yMin=Quotes.open.min() * 0.98, yMax=Quotes.open.max() * 1.02)
+                xMin=Quotes[0].id,
+                xMax=Quotes[-1].id,
+                minXRange=60,
+                yMin=Quotes.open.min() * 0.98,
+                yMax=Quotes.open.max() * 1.02,
+            )
             ind.showGrid(x=True, y=True)
             ind.setCursor(QtCore.Qt.BlankCursor)
 
     def _update_sizes(self):
         min_h_ind = int(self.height() * 0.3 / len(self.indicators))
-        sizes = [int(self.height() * 0.7), ]
+        sizes = [int(self.height() * 0.7)]
         sizes.extend([min_h_ind] * len(self.indicators))
         self.splitter.setSizes(sizes)  # , int(self.height()*0.2)
 
@@ -478,18 +533,19 @@ class QuotesChart(QtGui.QWidget):
         self.chart = CustomPlotWidget(
             parent=self.splitter,
             axisItems={'bottom': self.xaxis, 'right': PriceAxis()},
-            enableMenu=False)
+            enableMenu=False,
+        )
         self.chart.getPlotItem().setContentsMargins(*CHART_MARGINS)
-        self.chart.setFrameStyle(
-            QtGui.QFrame.StyledPanel | QtGui.QFrame.Plain)
+        self.chart.setFrameStyle(QtGui.QFrame.StyledPanel | QtGui.QFrame.Plain)
 
-        inds = [Quotes.open, ]
+        inds = [Quotes.open]
 
         for d in inds:
             ind = CustomPlotWidget(
                 parent=self.splitter,
                 axisItems={'bottom': self.xaxis_ind, 'right': PriceAxis()},
-                enableMenu=False)
+                enableMenu=False,
+            )
             ind.setFrameStyle(QtGui.QFrame.StyledPanel | QtGui.QFrame.Plain)
             ind.getPlotItem().setContentsMargins(*CHART_MARGINS)
             # self.splitter.addWidget(ind)
@@ -500,9 +556,8 @@ class QuotesChart(QtGui.QWidget):
         self._update_sizes()
 
         ch = CrossHairItem(
-            self.chart,
-            [_ind for _ind, d in self.indicators],
-            self.digits)
+            self.chart, [_ind for _ind, d in self.indicators], self.digits
+        )
         self.chart.addItem(ch)
 
     def add_signals(self):
@@ -515,26 +570,42 @@ class QuotesChart(QtGui.QWidget):
             if p.type == Order.BUY:
                 y = Quotes[x].low * 0.99
                 arrow_sig = pg.ArrowItem(
-                    parent=self.signals_group_arrow, pos=(x, y),
-                    pen=self.long_pen, brush=self.long_brush,
-                    angle=90, headLen=12, tipAngle=50)
+                    parent=self.signals_group_arrow,
+                    pos=(x, y),
+                    pen=self.long_pen,
+                    brush=self.long_brush,
+                    angle=90,
+                    headLen=12,
+                    tipAngle=50,
+                )
                 text_sig = CenteredTextItem(
-                    parent=self.signals_group_text, pos=(x, y),
-                    pen=self.long_pen, brush=self.long_brush,
+                    parent=self.signals_group_text,
+                    pos=(x, y),
+                    pen=self.long_pen,
+                    brush=self.long_brush,
                     text=('Buy at {:.%df}' % self.digits).format(price),
-                    valign=QtCore.Qt.AlignBottom)
+                    valign=QtCore.Qt.AlignBottom,
+                )
                 text_sig.hide()
             else:
                 y = Quotes[x].high * 1.01
                 arrow_sig = pg.ArrowItem(
-                    parent=self.signals_group_arrow, pos=(x, y),
-                    pen=self.short_pen, brush=self.short_brush,
-                    angle=-90, headLen=12, tipAngle=50)
+                    parent=self.signals_group_arrow,
+                    pos=(x, y),
+                    pen=self.short_pen,
+                    brush=self.short_brush,
+                    angle=-90,
+                    headLen=12,
+                    tipAngle=50,
+                )
                 text_sig = CenteredTextItem(
-                    parent=self.signals_group_text, pos=(x, y),
-                    pen=self.short_pen, brush=self.short_brush,
+                    parent=self.signals_group_text,
+                    pos=(x, y),
+                    pen=self.short_pen,
+                    brush=self.short_brush,
                     text=('Sell at {:.%df}' % self.digits).format(price),
-                    valign=QtCore.Qt.AlignTop)
+                    valign=QtCore.Qt.AlignTop,
+                )
                 text_sig.hide()
 
             self.signals_text_items[x] = text_sig
@@ -565,9 +636,9 @@ class EquityChart(QtGui.QWidget):
 
         self.chart = pg.PlotWidget(
             axisItems={'bottom': self.xaxis, 'right': self.yaxis},
-            enableMenu=False)
-        self.chart.setFrameStyle(
-            QtGui.QFrame.StyledPanel | QtGui.QFrame.Plain)
+            enableMenu=False,
+        )
+        self.chart.setFrameStyle(QtGui.QFrame.StyledPanel | QtGui.QFrame.Plain)
         self.chart.getPlotItem().setContentsMargins(*CHART_MARGINS)
         self.chart.showGrid(x=True, y=True)
         self.chart.hideAxis('left')
@@ -583,16 +654,21 @@ class EquityChart(QtGui.QWidget):
         legend.setParentItem(self.chart.getPlotItem())
 
         for arr, item in self.curves:
-            legend.addItem(SampleLegendItem(item), item.opts['name']
-                           if not isinstance(item, tuple)
-                           else item[0].opts['name'])
+            legend.addItem(
+                SampleLegendItem(item),
+                item.opts['name']
+                if not isinstance(item, tuple)
+                else item[0].opts['name'],
+            )
 
     def _add_ylabels(self):
         self.ylabels = []
         for arr, item in self.curves:
             color = (
-                item.opts['pen'] if not isinstance(item, tuple) else
-                [i.opts['pen'] for i in item])
+                item.opts['pen']
+                if not isinstance(item, tuple)
+                else [i.opts['pen'] for i in item]
+            )
             label = YAxisLabel(parent=self.yaxis, color=color)
             self.ylabels.append(label)
 
@@ -627,37 +703,57 @@ class EquityChart(QtGui.QWidget):
 
         # Equity
         self.eq_pos_curve = pg.PlotCurveItem(
-            eq_pos, name='Equity', fillLevel=0, antialias=True,
-            pen=self.eq_pen_pos_color, brush=self.eq_brush_pos_color)
+            eq_pos,
+            name='Equity',
+            fillLevel=0,
+            antialias=True,
+            pen=self.eq_pen_pos_color,
+            brush=self.eq_brush_pos_color,
+        )
         self.eq_neg_curve = pg.PlotCurveItem(
-            eq_neg, name='Equity', fillLevel=0, antialias=True,
-            pen=self.eq_pen_neg_color, brush=self.eq_brush_neg_color)
+            eq_neg,
+            name='Equity',
+            fillLevel=0,
+            antialias=True,
+            pen=self.eq_pen_neg_color,
+            brush=self.eq_brush_neg_color,
+        )
         self.chart.addItem(self.eq_pos_curve)
         self.chart.addItem(self.eq_neg_curve)
 
         # Only Long
         self.long_curve = pg.PlotCurveItem(
-            Portfolio.long_curve, name='Only Long',
-            pen=self.long_pen_color, antialias=True)
+            Portfolio.long_curve,
+            name='Only Long',
+            pen=self.long_pen_color,
+            antialias=True,
+        )
         self.chart.addItem(self.long_curve)
 
         # Only Short
         self.short_curve = pg.PlotCurveItem(
-            Portfolio.short_curve, name='Only Short',
-            pen=self.short_pen_color, antialias=True)
+            Portfolio.short_curve,
+            name='Only Short',
+            pen=self.short_pen_color,
+            antialias=True,
+        )
         self.chart.addItem(self.short_curve)
 
         # Buy and Hold
         self.buy_and_hold_curve = pg.PlotCurveItem(
-            Portfolio.buy_and_hold_curve, name='Buy and Hold',
-            pen=self.buy_and_hold_pen_color, antialias=True)
+            Portfolio.buy_and_hold_curve,
+            name='Buy and Hold',
+            pen=self.buy_and_hold_pen_color,
+            antialias=True,
+        )
         self.chart.addItem(self.buy_and_hold_curve)
 
         self.curves = [
             (Portfolio.equity_curve, (self.eq_pos_curve, self.eq_neg_curve)),
             (Portfolio.long_curve, self.long_curve),
             (Portfolio.short_curve, self.short_curve),
-            (Portfolio.buy_and_hold_curve, self.buy_and_hold_curve)]
+            (Portfolio.buy_and_hold_curve, self.buy_and_hold_curve),
+        ]
 
         self._add_legend()
         self._add_ylabels()
@@ -665,14 +761,23 @@ class EquityChart(QtGui.QWidget):
         ch = CrossHairItem(self.chart)
         self.chart.addItem(ch)
 
-        arrs = (Portfolio.equity_curve, Portfolio.buy_and_hold_curve,
-                Portfolio.long_curve, Portfolio.short_curve)
+        arrs = (
+            Portfolio.equity_curve,
+            Portfolio.buy_and_hold_curve,
+            Portfolio.long_curve,
+            Portfolio.short_curve,
+        )
         np_arrs = np.concatenate(arrs)
         _min = abs(np_arrs.min()) * -1.1
         _max = np_arrs.max() * 1.1
 
-        self.chart.setLimits(xMin=Quotes[0].id, xMax=Quotes[-1].id,
-                             yMin=_min, yMax=_max, minXRange=60)
+        self.chart.setLimits(
+            xMin=Quotes[0].id,
+            xMax=Quotes[-1].id,
+            yMin=_min,
+            yMax=_max,
+            minXRange=60,
+        )
 
         self.min_curve = arrs[0].copy()
         self.max_curve = arrs[0].copy()

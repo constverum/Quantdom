@@ -6,12 +6,9 @@ import sys
 
 from PyQt5 import QtGui
 
-from quantdom import (
-    __title__ as title,
-    __version__ as version,
-)
+from quantdom import __title__ as title
+from quantdom import __version__ as version
 from quantdom.ui import MainWidget
-
 
 logger = logging.getLogger(__name__)
 
