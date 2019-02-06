@@ -43,6 +43,7 @@ classifiers = [
 [tool.poetry.dependencies]
 python = "^3.6"
 PyQt5 = "^5.11"
+PyQt5-sip = "^4.19"
 pyqtgraph = "^0.10.0"
 numpy = "^1.16"
 pandas = "^0.24.1"
