@@ -12,7 +12,6 @@ from .lib import (
     OptimizatimizedResultsTable,
     OptimizationTable,
     Portfolio,
-    Quotes,
     QuotesChart,
     ResultsTable,
     Settings,

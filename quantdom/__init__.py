@@ -20,5 +20,4 @@ __version__ = '0.1a2'
 from .ui import *  # noqa
 from .lib import *  # noqa
 
-
-__all__ = ui.__all__ + lib.__all__ + (__title__, __version__)
+__all__ = ui.__all__ + lib.__all__ + (__title__, __version__)  # noqa

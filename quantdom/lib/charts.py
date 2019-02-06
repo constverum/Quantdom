@@ -140,13 +140,13 @@ class AxisLabel(pg.GraphicsObject):
         self.setFlag(self.ItemIgnoresTransformations)
 
     def tick_to_string(self, tick_pos):
-        raise NotImplemented()
+        raise NotImplementedError()
 
     def boundingRect(self):  # noqa
-        raise NotImplemented()
+        raise NotImplementedError()
 
     def update_label(self, evt_post, point_view):
-        raise NotImplemented()
+        raise NotImplementedError()
 
     def update_label_test(self, ypos=0, ydata=0):
         self.label_str = self.tick_to_string(ydata)
@@ -569,7 +569,7 @@ class QuotesChart(QtGui.QWidget):
             x, price = p.id_bar_open, p.open_price
             if p.type == Order.BUY:
                 y = Quotes[x].low * 0.99
-                arrow_sig = pg.ArrowItem(
+                pg.ArrowItem(
                     parent=self.signals_group_arrow,
                     pos=(x, y),
                     pen=self.long_pen,
@@ -589,7 +589,7 @@ class QuotesChart(QtGui.QWidget):
                 text_sig.hide()
             else:
                 y = Quotes[x].high * 1.01
-                arrow_sig = pg.ArrowItem(
+                pg.ArrowItem(
                     parent=self.signals_group_arrow,
                     pos=(x, y),
                     pen=self.short_pen,

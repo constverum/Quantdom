@@ -74,7 +74,7 @@ def strategies_from_file(filepath):
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
 
-    is_strategy = lambda _class: (
+    is_strategy = lambda _class: (  # noqa:E731
         inspect.isclass(_class)
         and issubclass(_class, AbstractStrategy)
         and _class.__name__ != 'AbstractStrategy'
