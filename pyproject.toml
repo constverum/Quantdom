@@ -52,20 +52,17 @@ pandas = "^0.24.1"
 pandas-datareader = "^0.7.0"
 
 [tool.poetry.dev-dependencies]
+black = {version = "^18.3-alpha.0",allows-prereleases = true}
+flake8 = "^3.7"
+isort = "^4.3"
 pytest = "^4.2"
 pytest-qt = "^3.2"
 pytest-runner = "^4.2"
-black = {version = "^18.3-alpha.0",allows-prereleases = true}
-flake8 = "^3.7"
 pytest-isort = "^0.2.1"
 pytest-flake8 = "^1.0"
 
 [tool.poetry.scripts]
 quantdom = "quantdom.cli:cli"
-
-# https://github.com/pytest-dev/pytest/issues/1556
-# https://github.com/pytest-dev/pytest/pull/3686
-# [tool.poetry.plugins.pytest]
 
 [tool.black]
 py36 = true
@@ -82,3 +79,24 @@ exclude = '''
   )
 )
 '''
+
+# https://github.com/pytest-dev/pytest/issues/1556
+# https://github.com/pytest-dev/pytest/pull/3686
+# [tool.poetry.plugins.pytest]
+# addopts = --verbose
+# testpaths = tests
+# qt_api = pyqt5
+
+# https://gitlab.com/pycqa/flake8/issues/428
+# https://gitlab.com/pycqa/flake8/merge_requests/245
+# [tool.flake8]
+# max-line-length = 80
+
+# https://github.com/timothycrosley/isort/issues/760
+# [tool.isort]
+# line_length = 80
+# multi_line_output = 3
+# include_trailing_comma = true
+# sections = "FUTURE,STDLIB,THIRDPARTY,FIRSTPARTY,LOCALFOLDER"
+# default_section = "FIRSTPARTY"
+
