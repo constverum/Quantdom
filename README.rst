@@ -36,7 +36,6 @@ Requirements
 * `PyQt5 <https://pypi.python.org/pypi/PyQt5>`_
 * `PyQtGraph <http://www.pyqtgraph.org/>`_
 * `NumPy <http://www.numpy.org/>`_
-* See `requirements.txt <https://github.com/constverum/Quantdom/blob/master/requirements.txt>`_ for full details.
 
 
 Installation
@@ -47,9 +46,9 @@ Using the binaries
 
 You can download binary packages for your system (see the `Github Releases <https://github.com/constverum/Quantdom/releases>`_ page for available downloads):
 
-* For `Windows  <https://github.com/constverum/Quantdom/releases/download/v0.1a1/quantdom_0.1a1.exe>`_
-* For `MacOS  <https://github.com/constverum/Quantdom/releases/download/v0.1a1/quantdom_0.1a1.dmg>`_
-* For `Linux  <https://github.com/constverum/Quantdom/releases/download/v0.1a1/quantdom_0.1a1.zip>`_
+* For `Windows  <https://github.com/constverum/Quantdom/releases/download/v0.1/quantdom_0.1.exe>`_
+* For `MacOS  <https://github.com/constverum/Quantdom/releases/download/v0.1/quantdom_0.1.dmg>`_
+* For `Linux  <https://github.com/constverum/Quantdom/releases/download/v0.1/quantdom_0.1.zip>`_
 
 Running from source code
 ########################
@@ -164,7 +163,7 @@ Contributing
 Disclaimer
 ----------
 
-This software should not be used as a financial advisor, it is for educational use only. 
+This software should not be used as a financial advisor, it is for educational use only.
 Absolutely no warranty is implied with this product. By using this software you release the author(s) from any liability regarding the use of this software. You can lose money because this program probably has some errors in it, so use it at your own risk. And please don't take risks with money you can't afford to lose.
 
 
