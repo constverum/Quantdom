@@ -26,7 +26,6 @@ Features
 * Multiple data feeds: csv files and online sources such as Google Finance, Yahoo Finance, Quandl and more
 * Investment Analysis (performance and risk analysis of financial portfolio)
 * Charting and reporting that help visualize backtest results
-.. * Multiple timeframes at once
 
 
 Requirements
@@ -36,6 +35,7 @@ Requirements
 * `PyQt5 <https://pypi.python.org/pypi/PyQt5>`_
 * `PyQtGraph <http://www.pyqtgraph.org/>`_
 * `NumPy <http://www.numpy.org/>`_
+* See `pyproject.toml <https://github.com/constverum/Quantdom/blob/master/pyproject.toml#L43-L50>`_ for full details.
 
 
 Installation
