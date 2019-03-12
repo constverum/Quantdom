@@ -36,7 +36,7 @@ class BaseQuotes(np.recarray):
                 np.flatnonzero(mask), np.flatnonzero(~mask), self[col][~mask]
             )
 
-    def _set_time_frame(self):
+    def _set_time_frame(self, default_tf):
         tf = {
             1: TimeFrame.M1,
             5: TimeFrame.M5,
@@ -47,9 +47,9 @@ class BaseQuotes(np.recarray):
             1440: TimeFrame.D1,
         }
         minutes = int(np.diff(self.time[-10:]).min() / 60)
-        self.timeframe = tf[minutes]
+        self.timeframe = tf.get(minutes) or tf[default_tf]
 
-    def new(self, data, source=None):
+    def new(self, data, source=None, default_tf=None):
         shape = (len(data),)
         self.resize(shape, refcheck=False)
 
@@ -73,7 +73,8 @@ class BaseQuotes(np.recarray):
             self[:] = data[:]
 
         self._nan_to_closest_num()
-        self._set_time_frame()
+        self._set_time_frame(default_tf)
+        return self
 
     def convert_dates(self, dates):
         return np.array([d.timestamp() for d in dates])

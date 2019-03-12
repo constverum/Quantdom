@@ -4,13 +4,17 @@ import logging
 import os.path
 import pickle
 
+import pandas as pd
+import pandas_datareader.data as web
 from pandas_datareader._utils import RemoteDataError
 from pandas_datareader.data import (
     get_data_google,
     get_data_quandl,
     get_data_yahoo,
+    get_data_alphavantage,
 )
 from pandas_datareader.nasdaq_trader import get_nasdaq_symbols
+from pandas_datareader.exceptions import ImmediateDeprecationError
 
 from .base import Quotes
 from .utils import get_data_path, timeit
@@ -31,7 +35,18 @@ class QuotesLoader:
 
     source = None
     timeframe = '1D'
+    sort_index = False
+    default_tf = None
     name_format = '%(symbol)s_%(tf)s_%(date_from)s_%(date_to)s.%(ext)s'
+
+    @classmethod
+    def _get(cls, symbol, date_from, date_to):
+        quotes = web.DataReader(
+            symbol, cls.source, start=date_from, end=date_to
+        )
+        if cls.sort_index:
+            quotes.sort_index(inplace=True)
+        return quotes
 
     @classmethod
     def _get_file_path(cls, symbol, tf, date_from, date_to):
@@ -59,13 +74,17 @@ class QuotesLoader:
     @classmethod
     @timeit
     def get_quotes(cls, symbol, date_from, date_to):
+        quotes = None
         fpath = cls._get_file_path(symbol, cls.timeframe, date_from, date_to)
         if os.path.exists(fpath):
-            Quotes.new(cls._load_from_disk(fpath))
+            quotes = Quotes.new(cls._load_from_disk(fpath))
         else:
-            quotes = cls._get(symbol, date_from, date_to)
-            Quotes.new(quotes, source=cls.source)
-            cls._save_to_disk(fpath, Quotes)
+            quotes_raw = cls._get(symbol, date_from, date_to)
+            quotes = Quotes.new(
+                quotes_raw, source=cls.source, default_tf=cls.default_tf
+            )
+            cls._save_to_disk(fpath, quotes)
+        return quotes
 
 
 class YahooQuotesLoader(QuotesLoader):
@@ -101,6 +120,44 @@ class QuandleQuotesLoader(QuotesLoader):
         return quotes
 
 
+class AlphaVantageQuotesLoader(QuotesLoader):
+
+    source = 'alphavantage'
+    api_key = 'demo'
+
+    @classmethod
+    def _get(cls, symbol, date_from, date_to):
+        quotes = get_data_alphavantage(
+            symbol, date_from, date_to, api_key=cls.api_key
+        )
+        return quotes
+
+
+class StooqQuotesLoader(QuotesLoader):
+
+    source = 'stooq'
+    sort_index = True
+    default_tf = 1440
+
+
+class IEXQuotesLoader(QuotesLoader):
+
+    source = 'iex'
+
+    @classmethod
+    def _get(cls, symbol, date_from, date_to):
+        quotes = web.DataReader(
+            symbol, cls.source, start=date_from, end=date_to
+        )
+        quotes['Date'] = pd.to_datetime(quotes.index)
+        return quotes
+
+
+class RobinhoodQuotesLoader(QuotesLoader):
+
+    source = 'robinhood'
+
+
 def get_symbols():
     fpath = os.path.join(get_data_path('stock_data'), 'symbols.qdom')
     if os.path.exists(fpath):
@@ -116,12 +173,15 @@ def get_symbols():
 
 def get_quotes(*args, **kwargs):
     quotes = []
-    loaders = [YahooQuotesLoader, GoogleQuotesLoader, QuandleQuotesLoader]
+    # don't work:
+    # GoogleQuotesLoader, QuandleQuotesLoader,
+    # AlphaVantageQuotesLoader, RobinhoodQuotesLoader
+    loaders = [YahooQuotesLoader, IEXQuotesLoader, StooqQuotesLoader]
     while loaders:
         loader = loaders.pop(0)
         try:
             quotes = loader.get_quotes(*args, **kwargs)
             break
-        except RemoteDataError:
-            pass
+        except (RemoteDataError, ImmediateDeprecationError) as e:
+            logger.error('get_quotes => error: %r', e)
     return quotes
