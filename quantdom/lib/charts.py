@@ -347,8 +347,8 @@ class CrossHairItem(pg.GraphicsObject):
 class BarItem(pg.GraphicsObject):
 
     w = 0.35
-    bull_brush = pg.mkBrush('#00cc00')
-    bear_brush = pg.mkBrush('#fa0000')
+    bull_brush = pg.mkPen('#00cc00')
+    bear_brush = pg.mkPen('#fa0000')
 
     def __init__(self):
         super().__init__()
@@ -428,7 +428,7 @@ class QuotesChart(QtGui.QWidget):
     def __init__(self):
         super().__init__()
         self.signals_visible = False
-        self.style = ChartType.CANDLESTICK
+        self.style = ChartType.BAR
         self.indicators = []
 
         self.xaxis = DateAxis(orientation='bottom')
