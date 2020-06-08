@@ -8,7 +8,6 @@ import pandas as pd
 import pandas_datareader.data as web
 from pandas_datareader._utils import RemoteDataError
 from pandas_datareader.data import (
-    get_data_google,
     get_data_quandl,
     get_data_yahoo,
     get_data_alphavantage,
@@ -21,7 +20,6 @@ from .utils import get_data_path, timeit
 
 __all__ = (
     'YahooQuotesLoader',
-    'GoogleQuotesLoader',
     'QuandleQuotesLoader',
     'get_symbols',
     'get_quotes',
@@ -94,19 +92,6 @@ class YahooQuotesLoader(QuotesLoader):
     @classmethod
     def _get(cls, symbol, date_from, date_to):
         return get_data_yahoo(symbol, date_from, date_to)
-
-
-class GoogleQuotesLoader(QuotesLoader):
-
-    source = 'google'
-
-    @classmethod
-    def _get(cls, symbol, date_from, date_to):
-        # FIXME: temporary fix
-        from pandas_datareader.google.daily import GoogleDailyReader
-
-        GoogleDailyReader.url = 'http://finance.google.com/finance/historical'
-        return get_data_google(symbol, date_from, date_to)
 
 
 class QuandleQuotesLoader(QuotesLoader):
