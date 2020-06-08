@@ -41,13 +41,13 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.6"
-PyQt5 = "^5.11"
-PyQt5-sip = "^4.19"
+python = "^3.8"
+PyQt5 = "^5.15"
+PyQt5-sip = "^12.8.0"
 pyqtgraph = "^0.10.0"
-numpy = "^1.16"
-pandas = "^0.24.1"
-pandas-datareader = "^0.7.0"
+numpy = "^1.17"
+pandas = "^1.0.4"
+pandas-datareader = "^0.8.0"
 
 [tool.poetry.dev-dependencies]
 black = {version = "^18.3-alpha.0",allows-prereleases = true}
@@ -63,7 +63,7 @@ pytest-flake8 = "^1.0"
 quantdom = "quantdom.cli:cli"
 
 [tool.black]
-py36 = true
+# py36 = true
 line-length = 80
 skip-string-normalization = true
 include = '\.pyi?$'
