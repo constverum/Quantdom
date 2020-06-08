@@ -50,8 +50,8 @@ You can download binary packages for your system (see the `Github Releases <http
 * For `MacOS  <https://github.com/constverum/Quantdom/releases/download/v0.1/quantdom_0.1.dmg>`_
 * For `Linux  <https://github.com/constverum/Quantdom/releases/download/v0.1/quantdom_0.1.zip>`_
 
-Running from source code
-########################
+Installing a System Wide Package
+################################
 
 You can install last *stable release* from pypi:
 
@@ -65,10 +65,19 @@ And latest *development version* can be installed directly from GitHub:
 
     $ pip install -U git+https://github.com/constverum/Quantdom.git
 
-After that, to run the application just execute one command:
+
+Running from source code
+##########################
+
+You can clone and run the application from source directly using
+`poetry`:
 
 .. code-block:: bash
 
+    $ git clone git@github.com:constverum/Quantdom.git
+    $ cd Quantdom
+    $ poetry install
+    $ poetry shell
     $ quantdom
 
 
